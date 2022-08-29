@@ -1,5 +1,13 @@
+import AntDesign from "@expo/vector-icons/build/AntDesign";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import {
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+} from "react-native";
 import My from "./my/my";
 import Quizz from "./quizz/quiz";
 import Ranking from "./rank/ranking";
@@ -7,6 +15,10 @@ import Ranking from "./rank/ranking";
 const Tab = createBottomTabNavigator();
 
 const HomeScreen = () => {
+  const [isCreate, setIsCreate] = useState<boolean>(false);
+
+  const { height } = useWindowDimensions();
+
   return (
     <Tab.Navigator
       initialRouteName="QUIZ"
@@ -20,9 +32,10 @@ const HomeScreen = () => {
         },
         tabBarItemStyle: {
           borderRadius: 9,
+          height: 40,
           justifyContent: "center",
-          marginHorizontal: 28,
-          marginVertical: 9,
+          alignItems: "center",
+          marginHorizontal: 26,
           shadowColor: "black",
           shadowOpacity: 0.26,
           shadowRadius: 3,
@@ -32,12 +45,15 @@ const HomeScreen = () => {
           },
         },
         tabBarStyle: {
-          height: 90,
+          display: "flex",
+          flexDirection: "row",
+          height: '12%',
           backgroundColor: "rgb(63,68,92)",
           alignItems: "center",
           borderTopWidth: 0,
         },
         headerStyle: {
+          height: 90,
           backgroundColor: "rgb(38, 42, 57)",
           borderBottomColor: "transparent",
           shadowColor: "transparent",
@@ -68,6 +84,19 @@ const HomeScreen = () => {
             fontSize: 30,
             fontWeight: "bold",
           },
+          headerRight: () => {
+            return (
+              <Pressable style={style.addQuizz}>
+                <AntDesign
+                  style={{ alignItems: "center", marginRight: 6 }}
+                  name="plus"
+                  size={16}
+                  color="rgb(255,228,0)"
+                />
+                <Text style={style.addQuizzText}>문제 추가</Text>
+              </Pressable>
+            );
+          },
         }}
       />
       <Tab.Screen
@@ -85,4 +114,24 @@ const HomeScreen = () => {
     </Tab.Navigator>
   );
 };
+
+const style = StyleSheet.create({
+  addQuizz: {
+    backgroundColor: "rgb(54, 59, 79)",
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    marginHorizontal: 14,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "row",
+  },
+  addQuizzText: {
+    color: "rgb(255,228,0)",
+    fontSize: 14.33,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 export default HomeScreen;
