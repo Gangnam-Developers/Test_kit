@@ -39,7 +39,7 @@ const AuthenticateScreen = () => {
   }
   return (
     <SafeAreaView style={style.safeViewArea}>
-      <StatusBar backgroundColor="blue" barStyle="light-content" />
+      <StatusBar backgroundColor="transparent" barStyle="light-content" />
       <View style={style.container} onLayout={onLayoutRootView}>
         <View style={{width: "100%", height: "60%", justifyContent: "center", alignItems:"center"}}>
           <Image style={{width: "100%", height: "60%", transform: [{scale: 0.9}]}} source={{uri: app_logos()}} />

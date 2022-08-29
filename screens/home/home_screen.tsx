@@ -1,13 +1,8 @@
 import AntDesign from "@expo/vector-icons/build/AntDesign";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import {
-  Dimensions,
-  Pressable,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-} from "react-native";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { QuizzCreatedForm } from "../../components/main/create_quizz/form.quizz";
 import My from "./my/my";
 import Quizz from "./quizz/quiz";
 import Ranking from "./rank/ranking";
@@ -15,10 +10,6 @@ import Ranking from "./rank/ranking";
 const Tab = createBottomTabNavigator();
 
 const HomeScreen = () => {
-  const [isCreate, setIsCreate] = useState<boolean>(false);
-
-  const { height } = useWindowDimensions();
-
   return (
     <Tab.Navigator
       initialRouteName="QUIZ"
@@ -47,7 +38,7 @@ const HomeScreen = () => {
         tabBarStyle: {
           display: "flex",
           flexDirection: "row",
-          height: '12%',
+          height: "12%",
           backgroundColor: "rgb(63,68,92)",
           alignItems: "center",
           borderTopWidth: 0,
@@ -77,7 +68,7 @@ const HomeScreen = () => {
       <Tab.Screen
         name="QUIZ"
         component={Quizz}
-        options={{
+        options={({ navigation }) => ({
           headerTitleAlign: "left",
           headerTitleStyle: {
             color: "#52dba6",
@@ -86,7 +77,10 @@ const HomeScreen = () => {
           },
           headerRight: () => {
             return (
-              <Pressable style={style.addQuizz}>
+              <TouchableOpacity
+                style={style.addQuizz}
+                onPress={() => navigation.navigate("퀴즈 만들기")}
+              >
                 <AntDesign
                   style={{ alignItems: "center", marginRight: 6 }}
                   name="plus"
@@ -94,10 +88,10 @@ const HomeScreen = () => {
                   color="rgb(255,228,0)"
                 />
                 <Text style={style.addQuizzText}>문제 추가</Text>
-              </Pressable>
+              </TouchableOpacity>
             );
           },
-        }}
+        })}
       />
       <Tab.Screen
         name="MY"
@@ -110,6 +104,27 @@ const HomeScreen = () => {
             fontWeight: "bold",
           },
         }}
+      />
+      <Tab.Screen
+        name="퀴즈 만들기"
+        component={QuizzCreatedForm}
+        options={({ navigation }) => ({
+          tabBarStyle: {
+            display: "none",
+          },
+          tabBarButton: () => null,
+          headerLeft: () => {
+            return (
+              <TouchableOpacity onPress={() => navigation.navigate("QUIZ")}>
+                <Text style={{color: "gray", marginHorizontal: 18}}>취소</Text>
+              </TouchableOpacity>
+            )
+          },
+          headerTitleStyle: {
+            color: "white",
+            fontWeight: "bold",
+          },
+        })}
       />
     </Tab.Navigator>
   );
