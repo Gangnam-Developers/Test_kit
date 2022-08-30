@@ -2,7 +2,7 @@ import AntDesign from "@expo/vector-icons/build/AntDesign";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import { QuizzCreatedForm } from "../../components/main/create_quizz/form.quizz";
+import QuizzCreate from "../createquizz/create_quizz_screen";
 import My from "./my/my";
 import Quizz from "./quizz/quiz";
 import Ranking from "./rank/ranking";
@@ -44,13 +44,8 @@ const HomeScreen = () => {
           borderTopWidth: 0,
         },
         headerStyle: {
-          height: 90,
-          backgroundColor: "rgb(38, 42, 57)",
-          borderBottomColor: "transparent",
-          shadowColor: "transparent",
-          borderBottomWidth: 0,
-          elevation: 0,
-        },
+          backgroundColor: "transparent"
+        }
       }}
     >
       <Tab.Screen
@@ -74,6 +69,14 @@ const HomeScreen = () => {
             color: "#52dba6",
             fontSize: 30,
             fontWeight: "bold",
+          },
+          headerStyle: {
+            height: 90,
+            backgroundColor: "rgb(38, 42, 57)",
+            borderBottomColor: "transparent",
+            shadowColor: "transparent",
+            borderBottomWidth: 0,
+            elevation: 0,
           },
           headerRight: () => {
             return (
@@ -107,7 +110,7 @@ const HomeScreen = () => {
       />
       <Tab.Screen
         name="퀴즈 만들기"
-        component={QuizzCreatedForm}
+        component={QuizzCreate}
         options={({ navigation }) => ({
           tabBarStyle: {
             display: "none",
@@ -123,6 +126,14 @@ const HomeScreen = () => {
           headerTitleStyle: {
             color: "white",
             fontWeight: "bold",
+          },
+          headerStyle: {
+            height: 90,
+            backgroundColor: "rgb(63, 68, 92)",
+            borderBottomColor: "transparent",
+            shadowColor: "transparent",
+            borderBottomWidth: 0,
+            elevation: 0,
           },
         })}
       />
