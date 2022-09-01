@@ -2,10 +2,7 @@ import AntDesign from "@expo/vector-icons/build/AntDesign";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import QuizzCreate from "../createquizz/create_quizz_screen";
-import My from "./my/my";
-import Quizz from "./quizz/quiz";
-import Ranking from "./rank/ranking";
+import { My, Quizz, QuizzCreate, Ranking } from "./partial";
 
 const Tab = createBottomTabNavigator();
 
@@ -52,11 +49,20 @@ const HomeScreen = () => {
         name="RANK"
         component={Ranking}
         options={{
+          headerTitle: "RANKING",
           headerTitleAlign: "left",
           headerTitleStyle: {
             color: "#52dba6",
             fontSize: 30,
             fontWeight: "bold",
+          },
+          headerStyle: {
+            height: 90,
+            backgroundColor: "rgb(63, 68, 92)",
+            borderBottomColor: "transparent",
+            shadowColor: "transparent",
+            borderBottomWidth: 0,
+            elevation: 0,
           },
         }}
       />
@@ -106,6 +112,15 @@ const HomeScreen = () => {
             fontSize: 30,
             fontWeight: "bold",
           },
+          headerStyle: {
+            height: 90,
+            backgroundColor: "rgb(63, 68, 92)",
+            borderBottomColor: "transparent",
+            shadowColor: "transparent",
+            borderBottomWidth: 0,
+            elevation: 0,
+          },
+          headerShown: false
         }}
       />
       <Tab.Screen

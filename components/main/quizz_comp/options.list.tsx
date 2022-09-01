@@ -1,6 +1,6 @@
 import AntDesign from "@expo/vector-icons/build/AntDesign";
 import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,

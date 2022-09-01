@@ -24,7 +24,6 @@ const AuthenticateScreen = () => {
         setAppIsReady(true);
       }
     }
-
     prepare();
   }, []);
 

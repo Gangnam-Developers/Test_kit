@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { SafeAreaView, StatusBar, StyleSheet, View } from "react-native";
-import { AnswerList } from "../../../components/main/quizz_comp/options.list";
-import { QuestionDisplay } from "../../../components/main/quizz_comp/question.card";
+import { AnswerList } from "../../../../components/main/quizz_comp/options.list";
+import { QuestionDisplay } from "../../../../components/main/quizz_comp/question.card";
 
 const Quizz = () => {
   const [checkMode, setCheckMode] = React.useState<any>("question");

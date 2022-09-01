@@ -1,0 +1,119 @@
+import React from "react";
+import { StyleSheet, View, Text, Image, FlatList } from "react-native";
+import { EmptyAvartar } from "../../icons/app_icons";
+
+interface Props {
+  data: Array<ItemsProps>;
+}
+
+export interface ItemsProps {
+  rank: {
+    digit: number;
+    color: string;
+  };
+  avatar: string;
+  name: {
+    label: string;
+    color: string;
+  };
+  rate: {
+    digit: number;
+    color: string;
+  };
+}
+
+const Items = ({ rank, avatar, name, rate }: ItemsProps) => (
+  <View style={styles.itemsContainer}>
+    <View style={{ flex: 0.05, marginHorizontal: 18 }}>
+      <Text style={{ color: rank.color, fontSize: 20, fontWeight: "bold" }}>
+        {rank.digit}
+      </Text>
+    </View>
+    <View
+      style={{
+        display: "flex",
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
+      <Image
+        style={{
+          borderRadius: 30,
+        }}
+        source={{
+          height: 40,
+          width: 40,
+          uri: avatar === undefined ? avatar : EmptyAvartar(),
+        }}
+      />
+      <Text
+        style={{
+          fontSize: 20,
+          color: name.color,
+          marginHorizontal: 18,
+          fontWeight: "bold",
+        }}
+      >
+        {name.label}
+      </Text>
+    </View>
+    <Text
+      style={{
+        color: rate.color,
+        marginHorizontal: 18,
+        fontSize: 20,
+        fontWeight: "bold",
+      }}
+    >
+      {rate.digit}%
+    </Text>
+  </View>
+);
+
+const CompeteList = ({ data }: Props) => {
+  const renderItems = ({ item }: any) => (
+    <View style={{height: "27%"}}>
+        <Items
+          rank={{
+            digit: item.rank.digit,
+            color: item.rank.color,
+          }}
+          avatar={item.avatar}
+          name={{
+            label: item.name.label,
+            color: item.name.color,
+          }}
+          rate={{
+            digit: item.rate.digit,
+            color: item.rate.color,
+          }}
+        />
+    </View>
+  );
+
+  return (
+    <FlatList
+      data={data}
+      initialNumToRender={9}
+      renderItem={renderItems}
+      keyExtractor={(items: ItemsProps) => `${items.rank.digit}`}
+    />
+  );
+};
+
+const styles = StyleSheet.create({
+  itemsContainer: {
+    margin: 18,
+    display: "flex",
+    flexDirection: "row",
+    flex: 1,
+    height: 70,
+    backgroundColor: "rgb(63, 67, 92)",
+    borderRadius: 9,
+    alignItems: "center",
+  },
+  items: {},
+});
+
+export { CompeteList };
