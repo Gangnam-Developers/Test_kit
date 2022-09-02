@@ -1,9 +1,18 @@
 import React from "react";
-import { StyleSheet, View, Text, Image, FlatList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { EmptyAvartar } from "../../icons/app_icons";
 
 interface Props {
   data: Array<ItemsProps>;
+  onDisPlay: Function;
+  navigation?: any;
 }
 
 export interface ItemsProps {
@@ -22,8 +31,28 @@ export interface ItemsProps {
   };
 }
 
-const Items = ({ rank, avatar, name, rate }: ItemsProps) => (
-  <View style={styles.itemsContainer}>
+type ItemInterSection = ItemsProps & {
+  onDisplay: Function;
+  navigation: any;
+};
+
+const Items = ({
+  rank,
+  avatar,
+  name,
+  rate,
+  navigation,
+  onDisplay,
+}: ItemInterSection) => (
+  <TouchableOpacity
+    style={styles.itemsContainer}
+    onPress={() => {
+      navigation.navigate("RANK", {
+        name: name,
+      });
+      onDisplay();
+    }}
+  >
     <View style={{ flex: 0.05, marginHorizontal: 18 }}>
       <Text style={{ color: rank.color, fontSize: 20, fontWeight: "bold" }}>
         {rank.digit}
@@ -68,27 +97,29 @@ const Items = ({ rank, avatar, name, rate }: ItemsProps) => (
     >
       {rate.digit}%
     </Text>
-  </View>
+  </TouchableOpacity>
 );
 
-const CompeteList = ({ data }: Props) => {
+const CompeteList = ({ data, navigation, onDisPlay }: Props) => {
   const renderItems = ({ item }: any) => (
-    <View style={{height: "27%"}}>
-        <Items
-          rank={{
-            digit: item.rank.digit,
-            color: item.rank.color,
-          }}
-          avatar={item.avatar}
-          name={{
-            label: item.name.label,
-            color: item.name.color,
-          }}
-          rate={{
-            digit: item.rate.digit,
-            color: item.rate.color,
-          }}
-        />
+    <View style={{ height: "27%" }}>
+      <Items
+        rank={{
+          digit: item.rank.digit,
+          color: item.rank.color,
+        }}
+        avatar={item.avatar}
+        name={{
+          label: item.name.label,
+          color: item.name.color,
+        }}
+        rate={{
+          digit: item.rate.digit,
+          color: item.rate.color,
+        }}
+        navigation={navigation}
+        onDisplay={onDisPlay}
+      />
     </View>
   );
 

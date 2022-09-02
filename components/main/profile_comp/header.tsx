@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { ReactNode } from "react";
+import React from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
 import { EmptyAvartar } from "../../icons/app_icons";
 
@@ -116,9 +116,11 @@ const Header = ({ ...props }: HeaderProps) => {
             width: 2,
             height: 54,
             backgroundColor: "rgba(35, 36, 38, 0.746)",
-            transform: [{
-                translateY: 8
-            }]
+            transform: [
+              {
+                translateY: 8,
+              },
+            ],
           }}
         ></View>
         <View

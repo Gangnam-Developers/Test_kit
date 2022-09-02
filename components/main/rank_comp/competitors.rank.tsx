@@ -1,10 +1,15 @@
 import React from "react";
 import { Dimensions, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import { Header } from "../../../../components/main/profile_comp/header";
-import { AndroidStatusBar } from "../../../../components/system_comp/android.status";
 import { VictoryPie } from "victory-native";
+import { AndroidStatusBar } from "../../system_comp/android.status";
+import { Header } from "../profile_comp/header";
 
-const My = (props: any) => {
+interface Props {
+  data: string;
+  goBack: Function
+}
+
+const Competitors = ({ data, goBack }: Props) => {
   return (
     <SafeAreaView style={style.statusBar}>
       <SafeAreaView style={style.container}>
@@ -13,15 +18,15 @@ const My = (props: any) => {
           barStyle="light-content"
         />
         <Header
-          currentUser={true}
+          currentUser={false}
           title={{
-            label: "Aria",
+            label: data,
           }}
           infoBoard={{
             rank: 32,
             quizzes: 51,
           }}
-          navigate={() => props.navigation.navigate("RANK")}
+          navigate={goBack}
         />
         <View
           style={{
@@ -107,7 +112,6 @@ const My = (props: any) => {
     </SafeAreaView>
   );
 };
-
 const style = StyleSheet.create({
   statusBar: {
     flex: 0,
@@ -138,4 +142,4 @@ const style = StyleSheet.create({
     ],
   },
 });
-export default My;
+export { Competitors };

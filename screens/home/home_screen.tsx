@@ -10,45 +10,49 @@ const HomeScreen = () => {
   return (
     <Tab.Navigator
       initialRouteName="QUIZ"
-      screenOptions={{
-        tabBarActiveBackgroundColor: "rgb(39,44,59)",
-        tabBarActiveTintColor: "#52dba6",
-        tabBarIconStyle: { display: "none" },
-        tabBarLabelStyle: {
-          fontWeight: "900",
-          fontSize: 18,
-        },
-        tabBarItemStyle: {
-          borderRadius: 9,
-          height: 40,
-          justifyContent: "center",
-          alignItems: "center",
-          marginHorizontal: 26,
-          shadowColor: "black",
-          shadowOpacity: 0.26,
-          shadowRadius: 3,
-          shadowOffset: {
-            width: 3,
-            height: 3,
+      // @ts-ignored
+      screenOptions={({ route }) => {
+        const options = {
+          tabBarActiveBackgroundColor: "rgb(39,44,59)",
+          tabBarActiveTintColor: "#52dba6",
+          tabBarIconStyle: { display: "none" },
+          tabBarLabelStyle: {
+            fontWeight: "900",
+            fontSize: 18,
           },
-        },
-        tabBarStyle: {
-          display: "flex",
-          flexDirection: "row",
-          height: "12%",
-          backgroundColor: "rgb(63,68,92)",
-          alignItems: "center",
-          borderTopWidth: 0,
-        },
-        headerStyle: {
-          backgroundColor: "transparent"
-        }
+          tabBarItemStyle: {
+            borderRadius: 9,
+            height: 40,
+            justifyContent: "center",
+            alignItems: "center",
+            marginHorizontal: 26,
+            shadowColor: "black",
+            shadowOpacity: 0.26,
+            shadowRadius: 3,
+            shadowOffset: {
+              width: 3,
+              height: 3,
+            },
+          },
+          tabBarStyle: {
+            display: "flex",
+            flexDirection: "row",
+            height: "12%",
+            backgroundColor: "rgb(63,68,92)",
+            alignItems: "center",
+            borderTopWidth: 0,
+          },
+          headerStyle: {
+            backgroundColor: "transparent",
+          },
+        };
+        return options;
       }}
     >
       <Tab.Screen
         name="RANK"
         component={Ranking}
-        options={{
+        options={({ route }) => ({
           headerTitle: "RANKING",
           headerTitleAlign: "left",
           headerTitleStyle: {
@@ -64,7 +68,7 @@ const HomeScreen = () => {
             borderBottomWidth: 0,
             elevation: 0,
           },
-        }}
+        })}
       />
       <Tab.Screen
         name="QUIZ"
@@ -88,7 +92,7 @@ const HomeScreen = () => {
             return (
               <TouchableOpacity
                 style={style.addQuizz}
-                onPress={() => navigation.navigate("퀴즈 만들기")}
+                onPress={() => navigation.navigate("QuizzCreate")}
               >
                 <AntDesign
                   style={{ alignItems: "center", marginRight: 6 }}
@@ -112,21 +116,14 @@ const HomeScreen = () => {
             fontSize: 30,
             fontWeight: "bold",
           },
-          headerStyle: {
-            height: 90,
-            backgroundColor: "rgb(63, 68, 92)",
-            borderBottomColor: "transparent",
-            shadowColor: "transparent",
-            borderBottomWidth: 0,
-            elevation: 0,
-          },
-          headerShown: false
+          headerShown: false,
         }}
       />
       <Tab.Screen
-        name="퀴즈 만들기"
+        name="QuizzCreate"
         component={QuizzCreate}
         options={({ navigation }) => ({
+          headerTitle: "퀴즈 만들기",
           tabBarStyle: {
             display: "none",
           },
@@ -134,9 +131,11 @@ const HomeScreen = () => {
           headerLeft: () => {
             return (
               <TouchableOpacity onPress={() => navigation.navigate("QUIZ")}>
-                <Text style={{color: "gray", marginHorizontal: 18}}>취소</Text>
+                <Text style={{ color: "gray", marginHorizontal: 18 }}>
+                  취소
+                </Text>
               </TouchableOpacity>
-            )
+            );
           },
           headerTitleStyle: {
             color: "white",

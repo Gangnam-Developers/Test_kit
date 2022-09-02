@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView, Text, View, StyleSheet } from "react-native";
+import { Competitors } from "../../../../components/main/rank_comp/competitors.rank";
 import { Bullentin } from "../../../../components/main/rank_comp/current_user.rank";
 import {
   CompeteList,
   ItemsProps,
 } from "../../../../components/main/rank_comp/rank.list";
 
-const Ranking = (props: any) => {
+const Ranking = ({ route, navigation }: any) => {
+  const [competitor, setCompetitor] = React.useState<boolean>(false);
+
   const mock: ItemsProps[] = [
     {
       rank: {
@@ -57,13 +60,26 @@ const Ranking = (props: any) => {
 
   return (
     <SafeAreaView style={style.container}>
-      <Bullentin
-        username="Aria"
-        rate={70}
-        rank={32}
-        navigate={() => props.navigation.navigate("MY")}
-      />
-      <CompeteList data={mock} />
+      {!competitor ? (
+        <>
+          <Bullentin
+            username="Aria"
+            rate={70}
+            rank={32}
+            navigate={() => navigation.navigate("MY")}
+          />
+          <CompeteList
+            data={mock}
+            navigation={navigation}
+            onDisPlay={() => setCompetitor(true)}
+          />
+        </>
+      ) : (
+        <Competitors data={route.params.name.label} goBack={() => {
+          setCompetitor(false);
+          navigation.setParams(undefined);
+        }}/>
+      )}
     </SafeAreaView>
   );
 };
