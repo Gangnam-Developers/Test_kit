@@ -1,7 +1,9 @@
 {
   "expo": {
+    "scheme": "quizzapp",
     "name": "QuizzApp",
-    "slug": "QuizzApp",
+    "slug": "quizz",
+    "owner": "lelelele",
     "version": "1.0.0",
     "jsEngine": "hermes",
     "orientation": "portrait",

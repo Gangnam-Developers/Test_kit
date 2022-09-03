@@ -9,6 +9,7 @@ import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 import { UserModule } from './services/users/user.module';
 import { QuestionsModule } from './services/questions/questions.module';
 import { QuestionsResolver } from './app/questions.resolver';
+import { AuthModule } from './services/auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { QuestionsResolver } from './app/questions.resolver';
     ConnectorModule,
     UserModule,
     QuestionsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, GoogleStrategy, QuestionsResolver],

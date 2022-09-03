@@ -10,6 +10,10 @@ export class UserService {
     private userModel: Model<IUsers>,
   ) {}
 
+  getUser = async (email: string) => {
+    return await this.userModel.findOne({ email });
+  };
+
   create = async (createUser: CreateUser): Promise<IUsers> => {
     const initUser = new this.userModel(createUser);
     return await initUser.save();

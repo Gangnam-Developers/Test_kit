@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema(
   {
-    firstname: String,
-    lastname: String,
+    name: String,
     email: String,
+    picture: String,
   },
   {
     timestamps: true,

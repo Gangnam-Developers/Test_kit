@@ -1,5 +1,6 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { Guard } from 'src/services/auth/guard/jwt.guard';
 import { QuestionsService } from 'src/services/questions/questions.service';
 import { QuestionsDTO } from 'src/struct/dto/question.dto';
 import { CreateQuestion } from 'src/struct/input/input';
@@ -9,11 +10,13 @@ import { Message } from 'src/struct/reponses/types';
 export class QuestionsResolver {
   constructor(private readonly question: QuestionsService) {}
 
+  @UseGuards(Guard)
   @Query(() => [QuestionsDTO])
   async questions() {
     return this.question.getQuestions();
   }
 
+  @UseGuards(Guard)
   @Mutation(() => Message)
   async createQuestion(@Args('make') make: CreateQuestion) {
     try {

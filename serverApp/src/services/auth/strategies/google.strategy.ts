@@ -7,10 +7,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
    */
   constructor() {
     super({
-      clientID: `${process.env.GOOGLE_CLIENT_ID}`,
-      clientSecret: `${process.env.GOOGLE_SECRET}`,
-      callbackURL: `${process.env.GOOGLE_CALLBACKURL}`,
-      passReqToCallback: true,
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACKURL,
       scope: ['email', 'profile'],
     });
   }

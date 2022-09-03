@@ -6,9 +6,9 @@ interface IQuestions extends Document {
 }
 
 interface IUsers extends Document {
+  readonly name: string;
   readonly email: string;
-  readonly firstname: string;
-  readonly lastname: string;
+  readonly picture: string;
 }
 
 export { IQuestions, IUsers };
