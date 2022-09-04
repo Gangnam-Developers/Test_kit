@@ -6,7 +6,7 @@ import { Header } from "../profile_comp/header";
 
 interface Props {
   data: string;
-  goBack: Function
+  goBack: Function;
 }
 
 const Competitors = ({ data, goBack }: Props) => {
@@ -27,6 +27,7 @@ const Competitors = ({ data, goBack }: Props) => {
             quizzes: 51,
           }}
           navigate={goBack}
+          logout={() => {}}
         />
         <View
           style={{

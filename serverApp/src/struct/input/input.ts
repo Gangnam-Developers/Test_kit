@@ -25,4 +25,10 @@ class AuthInput {
   readonly access_token: string;
 }
 
-export { CreateUser, CreateQuestion, AuthInput };
+@ArgsType()
+class ShuffBool {
+  @Field(() => Boolean)
+  readonly shuffle: boolean;
+}
+
+export { CreateUser, CreateQuestion, AuthInput, ShuffBool };

@@ -3,7 +3,7 @@ import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { Guard } from 'src/services/auth/guard/jwt.guard';
 import { QuestionsService } from 'src/services/questions/questions.service';
 import { QuestionsDTO } from 'src/struct/dto/question.dto';
-import { CreateQuestion } from 'src/struct/input/input';
+import { CreateQuestion, ShuffBool } from 'src/struct/input/input';
 import { Message } from 'src/struct/reponses/types';
 
 @Resolver()
@@ -12,8 +12,14 @@ export class QuestionsResolver {
 
   @UseGuards(Guard)
   @Query(() => [QuestionsDTO])
-  async questions() {
-    return this.question.getQuestions();
+  async questions(@Args() shuffle: ShuffBool) {
+    const questionDiff = await this.question.getQuestions();
+
+    if (!shuffle.shuffle) {
+      return this.question.getQuestions();
+    }
+
+    return questionDiff.sort(() => Math.random() - 0.5);
   }
 
   @UseGuards(Guard)

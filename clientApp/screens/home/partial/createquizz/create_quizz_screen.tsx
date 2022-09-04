@@ -2,11 +2,11 @@ import React from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
 import { QuizzCreatedForm } from "../../../../components/main/create_quizz_comp/form.quizz";
 
-const QuizzCreate = () => {
+const QuizzCreate = (props: any) => {
   return (
     <View style={style.container}>
       <StatusBar backgroundColor="transparent" barStyle="light-content" />
-      <QuizzCreatedForm />
+      <QuizzCreatedForm goBack={() => props.navigation.navigate("QUIZ")} />
     </View>
   );
 };

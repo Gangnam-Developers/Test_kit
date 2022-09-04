@@ -13,7 +13,7 @@ import {
 import "react-native-get-random-values";
 
 interface Props {
-  answerOpts: any;
+  answerOpts?: any;
   action: {
     incorrect: Function;
     correct: Function;
@@ -30,8 +30,10 @@ const AnswerList = ({ answerOpts, action, mode }: Props): JSX.Element => {
   const ListRender = ({ item }: any) => {
     const selected = (value: number, isCorrect: any) => {
       setPickedOpt(value);
-      setIsCorrect(isCorrect === "true" ? true : false);
+      setIsCorrect(isCorrect);
     };
+
+    // console.log(isCorrect)
 
     const changeStyle = (option: string): StyleProp<ViewStyle> => {
       if (isCorrect !== undefined) {
@@ -56,7 +58,7 @@ const AnswerList = ({ answerOpts, action, mode }: Props): JSX.Element => {
     return (
       <TouchableOpacity
         disabled={disabled}
-        onPress={() => selected(item.option, item.isCorrect)}
+        onPress={() => {selected(item.option, item.isCorrect); console.log(item.isCorrect)}}
       >
         <View style={changeStyle(item.option)}>
           <View style={style.optionInner}>

@@ -1,18 +1,78 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { Dimensions, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Header } from "../../../../components/main/profile_comp/header";
 import { AndroidStatusBar } from "../../../../components/system_comp/android.status";
 import { VictoryPie } from "victory-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { BASE_URL } from "react-native-dotenv";
 
 const My = ({ props, logout }: { props: any; logout: Function }) => {
+  const [myInfo, setMyInfo] = React.useState<{
+    avatar?: string,
+    name: string;
+    rank?: number;
+    quizzes?: number;
+  }>({
+    name: "",
+    rank: 0,
+    quizzes: 0,
+  });
+
+  const [data, setData] = React.useState<any>();
+
   const onLogout = React.useCallback(async () => {
     try {
       await AsyncStorage.removeItem("access_token").then(() => logout());
     } catch (error) {
-      console.warn(error)
+      console.warn(error);
     }
   }, []);
+
+  useMemo(async () => {
+    try {
+      const getToken = await AsyncStorage.getItem("access_token");
+
+      if (getToken === null) return;
+
+      const current_user = await axios.post(
+        BASE_URL,
+        {
+          query: `mutation{
+            getCurrentUser{
+              name
+              email
+              picture
+            }
+          }`,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken}`,
+          },
+        }
+      );
+
+      if (current_user.status === 200) {
+        setData(current_user.data.data.getCurrentUser);
+      }
+    } catch (error) {
+      if (error) {
+        // onLogout();
+        console.warn(error);
+      }
+    }
+  }, []);
+
+
+  useEffect(() => {
+    if (data !== undefined) {
+      setMyInfo({
+        avatar: data.picture,
+        name: data.name,
+      })
+    }
+  }, [data])
 
   return (
     <SafeAreaView style={style.statusBar}>
@@ -23,8 +83,9 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
         />
         <Header
           currentUser={true}
+          avatar={myInfo.avatar}
           title={{
-            label: "Aria",
+            label: myInfo.name,
           }}
           infoBoard={{
             rank: 32,

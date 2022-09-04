@@ -1,15 +1,34 @@
-import axios from "axios";
 import React, { useEffect, useMemo } from "react";
-import { SafeAreaView, StatusBar, StyleSheet, View } from "react-native";
-import { BASE_URL } from "react-native-dotenv";
+import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { AnswerList } from "../../../../components/main/quizz_comp/options.list";
 import { QuestionDisplay } from "../../../../components/main/quizz_comp/question.card";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { gql, useQuery } from "@apollo/client";
 
 const Quizz = () => {
   const [checkMode, setCheckMode] = React.useState<any>("question");
 
+  const [shuf, setShuf] = React.useState<boolean>(false);
+
   const [test, setTest] = React.useState<any>();
+
+  const { data, refetch, loading } = useQuery(
+    gql`
+      query Question($shuffle: Boolean!) {
+        questions(shuffle: $shuffle) {
+          id
+          question
+          options
+        }
+      }
+    `,
+    {
+      variables: {
+        shuffle: shuf,
+      },
+    }
+  );
+
+  console.log(loading)
 
   const clearUp = async () => {
     try {
@@ -28,45 +47,22 @@ const Quizz = () => {
   }, [checkMode]);
 
   useMemo(async () => {
-    try {
-      const getToken = await AsyncStorage.getItem("access_token");
-
-      if (getToken === null) return;
-
-      const questions = await axios.post(
-        `${BASE_URL}`,
-        {
-          query: `query{
-          questions{
-            id
-            question
-            options
-          }
-        }`,
-          variables: {},
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken}`,
-          },
-        }
-      );
-
-      if (questions.status === 200) {
-        setTest(questions.data.data);
-      }
-    } catch (error) {
-      console.error(error);
+    if (data !== undefined) {
+      setTest(data);
     }
-  }, []);
-
-  // console.log(test.questions[0].options)
-  // console.log(test);
+  }, [data]);
 
   return (
     <SafeAreaView style={style.container}>
       <StatusBar backgroundColor="transparent" barStyle="light-content" />
-      <QuestionDisplay mode={checkMode} data={test} />
+      <QuestionDisplay
+        mode={checkMode}
+        data={test}
+        shuffle={() => {
+          setShuf(true);
+          refetch();
+        }}
+      />
       <AnswerList
         answerOpts={test}
         action={{

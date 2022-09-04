@@ -1,5 +1,7 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import React from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import {
   View,
   TextInput,
@@ -8,21 +10,81 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { BASE_URL } from "react-native-dotenv";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-const QuizzCreatedForm = (): JSX.Element => {
+interface Question {
+  question: string;
+  correctAnswer: string;
+  opts1: string;
+  opts2: string;
+}
+
+const QuizzCreatedForm = ({ goBack }: { goBack: Function }): JSX.Element => {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      questions: "",
+      question: "",
       correctAnswer: "",
       opts1: "",
       opts2: "",
     },
   });
+
+  const createQuestion: SubmitHandler<Question> = async (data) => {
+    const question = data.question;
+    const options = [
+      {
+        option: data.correctAnswer,
+        isCorrect: true,
+      },
+      {
+        option: data.opts1,
+        isCorrect: false,
+      },
+      {
+        option: data.opts2,
+        isCorrect: false,
+      },
+    ];
+
+    const shuffle = options.sort(() => Math.random() - 0.5);
+
+    const getToken = await AsyncStorage.getItem("access_token");
+
+    return await axios
+      .post(
+        `${BASE_URL}`,
+        {
+          query: `mutation CreateQuestion($make: CreateQuestion!){
+          createQuestion(make: $make){
+            message
+        }
+      }`,
+          variables: {
+            make: {
+              question: question,
+              options: shuffle,
+            },
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          goBack();
+        }
+      })
+      .catch((error) => console.log(error));
+  };
 
   return (
     <>
@@ -45,10 +107,12 @@ const QuizzCreatedForm = (): JSX.Element => {
                   placeholder={"ex. 바나나의 색상은?"}
                   placeholderTextColor={"gray"}
                   style={styles.question}
+                  value={value}
+                  onChangeText={onChange}
                   numberOfLines={4}
                 />
               )}
-              name={"questions"}
+              name={"question"}
             />
           </ScrollView>
           <Text style={{ ...styles.label, marginTop: 33 }}>
@@ -64,54 +128,65 @@ const QuizzCreatedForm = (): JSX.Element => {
                     ...styles.container,
                     height: 52,
                     paddingHorizontal: 18,
+                    color: "white",
                   }}
                   placeholder={"ex. 바나나의 색상은?"}
                   inputAccessoryViewID={"questionID"}
                   placeholderTextColor={"gray"}
+                  value={value}
+                  onChangeText={onChange}
                   onBlur={onBlur}
                 />
               )}
               name={"correctAnswer"}
             />
           </View>
-          <View style={{
-            display: "flex",
-            flexDirection: "column",
-            marginVertical: 18
-          }}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              marginVertical: 18,
+            }}
+          >
             <Text style={styles.label}>오답을 적어주세요</Text>
             <View>
               <Controller
                 control={control}
                 rules={{ required: true }}
-                render={({ field: { onBlur } }) => (
+                render={({ field: { onBlur, value, onChange } }) => (
                   <TextInput
                     style={{
                       ...styles.container,
                       height: 52,
                       paddingHorizontal: 18,
+                      color: "white",
                     }}
                     placeholder={"ex. 빨간색"}
                     placeholderTextColor={"gray"}
+                    value={value}
+                    onChangeText={onChange}
                     onBlur={onBlur}
                   />
                 )}
                 name={"opts1"}
               />
             </View>
-            <View style={{marginVertical: 9}}>
+            <View style={{ marginVertical: 9 }}>
               <Controller
                 control={control}
                 rules={{ required: true }}
-                render={({ field: { onBlur } }) => (
+                render={({ field: { onBlur, value, onChange } }) => (
                   <TextInput
                     style={{
                       ...styles.container,
                       height: 52,
                       paddingHorizontal: 18,
+                      color: "white",
                     }}
                     placeholder={"ex. 빨간색"}
                     placeholderTextColor={"gray"}
+                    value={value}
+                    onChangeText={onChange}
                     onBlur={onBlur}
                   />
                 )}
@@ -121,8 +196,10 @@ const QuizzCreatedForm = (): JSX.Element => {
           </View>
         </KeyboardAwareScrollView>
         <View style={styles.submit}>
-          <TouchableOpacity>
-            <Text style={{fontSize: 18, fontWeight: "bold"}}>퀴즈 등록하기</Text>
+          <TouchableOpacity onPress={handleSubmit(createQuestion)}>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+              퀴즈 등록하기
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -135,7 +212,7 @@ const styles = StyleSheet.create({
     height: 180,
     maxHeight: 180,
     marginHorizontal: 14,
-    paddingVertical :9,
+    paddingVertical: 9,
     backgroundColor: "rgb(39, 49, 59)",
     borderRadius: 9,
     borderWidth: 0.5,
@@ -145,7 +222,7 @@ const styles = StyleSheet.create({
     height: 180,
     maxHeight: 180,
     paddingHorizontal: 18,
-    paddingVertical :18,
+    paddingVertical: 18,
     color: "white",
   },
   label: {
@@ -161,8 +238,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 });
 
 export { QuizzCreatedForm };

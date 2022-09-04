@@ -9,15 +9,17 @@ import {
   Animated,
   Easing,
   Vibration,
+  TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 interface Props {
   mode?: "correct" | "incorrect" | "question" | undefined;
-  data: any | undefined;
+  data?: any;
+  shuffle: Function;
 }
 
-const QuestionDisplay = ({ mode, data }: Props): JSX.Element => {
+const QuestionDisplay = ({ mode, data, shuffle }: Props): JSX.Element => {
 
   const [question, setQuestions] = React.useState<any>();
 
@@ -192,7 +194,7 @@ const QuestionDisplay = ({ mode, data }: Props): JSX.Element => {
           borderBottomRightRadius: 9,
         }}
       >
-        <Pressable
+        <TouchableOpacity
           style={{
             display: "flex",
             flexDirection: "row",
@@ -200,10 +202,11 @@ const QuestionDisplay = ({ mode, data }: Props): JSX.Element => {
             alignItems: "center",
             marginHorizontal: 9,
           }}
+          onPress={() => shuffle()}
         >
           <Ionicons name="reload" size={18} color="white" />
           <Text style={{ marginLeft: 3, color: "white" }}>건너뛰기</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </View>
   );

@@ -96,11 +96,15 @@ const GoogleLogin = ({ action }: { action: Function }) => {
 
       if (authentication !== undefined) {
         const reponse = await Authorize(authentication);
+
+        console.log(reponse.data.data.auth.access_token)
+
         try {
           await AsyncStorage.setItem(
             "access_token",
             reponse.data.data.auth.access_token
-          ).then(() => action());
+          )
+            .then(() => action())
         } catch (error) {
           console.warn(error);
         }
