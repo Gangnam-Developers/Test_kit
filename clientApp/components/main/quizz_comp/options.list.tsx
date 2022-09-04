@@ -1,3 +1,5 @@
+import AntDesign from "@expo/vector-icons/build/AntDesign";
+import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -34,7 +36,6 @@ const AnswerList = ({ answerOpts, action, mode }: Props): JSX.Element => {
     const changeStyle = (option: string): StyleProp<ViewStyle> => {
       if (isCorrect !== undefined) {
         if (pickedOpt === option && isCorrect) {
-          // setDisable(false);
           action.correct();
           return {
             ...style.main,
@@ -59,7 +60,29 @@ const AnswerList = ({ answerOpts, action, mode }: Props): JSX.Element => {
       >
         <View style={changeStyle(item.option)}>
           <View style={style.optionInner}>
-            <View style={{ flex: 0.5 }}></View>
+            <View style={{ flex: 0.5 }}>
+              {isCorrect === true && pickedOpt === item.option && (
+                <AntDesign
+                  style={{
+                    marginHorizontal: 12,
+                  }}
+                  name="checkcircle"
+                  size={24}
+                  color="white"
+                />
+              )}
+              {isCorrect === false && pickedOpt === item.option && (
+                <MaterialIcons
+                  style={{
+                    marginHorizontal: 12,
+                  }}
+                  name="cancel"
+                  size={26}
+                  color="white"
+                />
+              )}
+              {isCorrect === undefined && null}
+            </View>
             <View>
               <Text style={style.text}>{item.option}</Text>
             </View>
