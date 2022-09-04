@@ -25,7 +25,9 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isSignedIn ? (
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Home">
+            {props => <HomeScreen {...props} logout={() => setIsSignedIn(false)} />}
+          </Stack.Screen>
         ) : (
           <Stack.Screen name="Authentication">
             {props => <AuthenticateScreen {...props} action={() => setIsSignedIn(true)} />}

@@ -1,129 +1,99 @@
-import AntDesign from "@expo/vector-icons/build/AntDesign";
-import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   StyleProp,
   ViewStyle,
+  FlatList,
 } from "react-native";
 import "react-native-get-random-values";
-import { v4 as uuidv4 } from "uuid";
 
 interface Props {
-  answerOpts: Array<any>;
+  answerOpts: any;
   action: {
     incorrect: Function;
     correct: Function;
   };
   mode?: "correct" | "incorrect" | "question";
 }
+
 const AnswerList = ({ answerOpts, action, mode }: Props): JSX.Element => {
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [pickedOpt, setPickedOpt] = useState<number>(-1);
+  const [answers, setAnswers] = useState<Array<any>>();
+  const [isCorrect, setIsCorrect] = useState<boolean | undefined>();
+  const [pickedOpt, setPickedOpt] = useState<any>();
   const [disabled, setDisable] = useState<boolean>(false);
 
-  const [icon, setIcon] = useState<{
-    correctIcon: boolean;
-    incorrectIcon: boolean;
-  }>({
-    correctIcon: false,
-    incorrectIcon: false,
-  });
+  const ListRender = ({ item }: any) => {
+    const selected = (value: number, isCorrect: any) => {
+      setPickedOpt(value);
+      setIsCorrect(isCorrect === "true" ? true : false);
+    };
 
-  const checkAnswer = (index: number) => {
-    setPickedOpt(index);
-
-    if (isCorrect) {
-      setIcon({
-        correctIcon: true,
-        incorrectIcon: false,
-      });
-      action.correct();
-    } else {
-      setIcon({
-        correctIcon: false,
-        incorrectIcon: true,
-      });
-      action.incorrect();
-    }
-  };
-
-  const handleSelectedItem = (pickedAt: number): StyleProp<ViewStyle> => {
-    if (mode !== "question") {
-      if (pickedAt === pickedOpt && isCorrect) {
-        return {
-          ...style.main,
-          backgroundColor: "green",
-        };
-      } else if (pickedAt === pickedOpt && !isCorrect) {
-        return {
-          ...style.main,
-          backgroundColor: "red",
-        };
+    const changeStyle = (option: string): StyleProp<ViewStyle> => {
+      if (isCorrect !== undefined) {
+        if (pickedOpt === option && isCorrect) {
+          // setDisable(false);
+          action.correct();
+          return {
+            ...style.main,
+            backgroundColor: "green",
+          };
+        } else if (option === pickedOpt && !isCorrect) {
+          setDisable(true);
+          action.incorrect();
+          return {
+            ...style.main,
+            backgroundColor: "red",
+          };
+        }
       }
-    }
-    return style.main;
+      return style.main;
+    };
+
+    return (
+      <TouchableOpacity
+        disabled={disabled}
+        onPress={() => selected(item.option, item.isCorrect)}
+      >
+        <View style={changeStyle(item.option)}>
+          <View style={style.optionInner}>
+            <View style={{ flex: 0.5 }}></View>
+            <View>
+              <Text style={style.text}>{item.option}</Text>
+            </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   useEffect(() => {
     if (mode === "question") {
-      setIsCorrect(null);
+      setIsCorrect(undefined);
       setDisable(false);
     }
   }, [mode]);
 
   useEffect(() => {
-    if (mode === "incorrect" || mode === "correct") {
+    if (mode === "incorrect") {
       setDisable(true);
     }
   }, [mode]);
 
+  useEffect(() => {
+    if (answerOpts !== undefined) {
+      setAnswers(answerOpts.questions[0].options);
+    }
+  }, [answerOpts]);
+
   return (
-    <ScrollView>
-      {answerOpts.map((el, index: number) => (
-        <TouchableOpacity
-          disabled={disabled}
-          key={uuidv4()}
-          onPress={() => checkAnswer(index)}
-        >
-          <View style={handleSelectedItem(index)} key={index}>
-            <View style={style.optionInner}>
-              <View style={{ flex: 0.5 }}>
-                {icon.correctIcon && index === pickedOpt && (
-                  <AntDesign
-                    style={{
-                      marginHorizontal: 12,
-                    }}
-                    name="checkcircle"
-                    size={24}
-                    color="white"
-                  />
-                )}
-                {icon.incorrectIcon &&
-                  index === pickedOpt &&
-                  mode !== "question" && (
-                    <MaterialIcons
-                      style={{
-                        marginHorizontal: 12,
-                      }}
-                      name="cancel"
-                      size={26}
-                      color="white"
-                    />
-                  )}
-              </View>
-              <View style={{ flex: 0.3 }}>
-                <Text style={style.text}>{el}</Text>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
+    <FlatList
+      data={answers}
+      renderItem={ListRender}
+      keyExtractor={(_, index) => index.toString()}
+    />
   );
 };
 

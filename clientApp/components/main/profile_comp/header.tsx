@@ -14,6 +14,7 @@ interface HeaderProps {
     quizzes: number;
   };
   navigate: Function;
+  logout: Function;
 }
 
 const Header = ({ ...props }: HeaderProps) => {
@@ -76,7 +77,7 @@ const Header = ({ ...props }: HeaderProps) => {
                 flex: 0.25,
               }}
             >
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => props.logout()}>
                 <Text style={{ textAlign: "center", color: "white" }}>
                   로그아웃
                 </Text>

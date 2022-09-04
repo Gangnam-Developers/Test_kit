@@ -3,8 +3,17 @@ import { Dimensions, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Header } from "../../../../components/main/profile_comp/header";
 import { AndroidStatusBar } from "../../../../components/system_comp/android.status";
 import { VictoryPie } from "victory-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const My = (props: any) => {
+const My = ({ props, logout }: { props: any; logout: Function }) => {
+  const onLogout = React.useCallback(async () => {
+    try {
+      await AsyncStorage.removeItem("access_token").then(() => logout());
+    } catch (error) {
+      console.warn(error)
+    }
+  }, []);
+
   return (
     <SafeAreaView style={style.statusBar}>
       <SafeAreaView style={style.container}>
@@ -22,6 +31,7 @@ const My = (props: any) => {
             quizzes: 51,
           }}
           navigate={() => props.navigation.navigate("RANK")}
+          logout={onLogout}
         />
         <View
           style={{

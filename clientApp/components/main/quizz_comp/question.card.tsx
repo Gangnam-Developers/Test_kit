@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   View,
   ScrollView,
@@ -14,9 +14,13 @@ import { LinearGradient } from "expo-linear-gradient";
 
 interface Props {
   mode?: "correct" | "incorrect" | "question" | undefined;
+  data: any | undefined;
 }
 
-const QuestionDisplay = ({ mode }: Props): JSX.Element => {
+const QuestionDisplay = ({ mode, data }: Props): JSX.Element => {
+
+  const [question, setQuestions] = React.useState<any>();
+
   const shake = React.useRef(new Animated.Value(0.3)).current;
 
   const ONE_SECOND_IN_MS = 1000;
@@ -80,6 +84,14 @@ const QuestionDisplay = ({ mode }: Props): JSX.Element => {
       runAnimation();
     }
   }, [mode]);
+
+  useMemo(() => {
+    if (data !== undefined) {
+      setQuestions(data.questions[0].question)
+    }
+  }, [data])
+
+  // console.log(question)
 
   if (mode === "incorrect") {
     return (
@@ -165,7 +177,7 @@ const QuestionDisplay = ({ mode }: Props): JSX.Element => {
   return (
     <View style={style.mainArea}>
       <ScrollView style={style.questionArea}>
-        <Text style={style.text}>This area display questions</Text>
+        <Text style={style.text}>{question}</Text>
       </ScrollView>
       <View
         style={{

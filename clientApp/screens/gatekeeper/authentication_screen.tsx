@@ -69,7 +69,7 @@ const GoogleLogin = ({ action }: { action: Function }) => {
 
   const Authorize = async (authentication: any) => {
     let jwt_token = await axios.post(
-      BASE_URL,
+      `${BASE_URL}`,
       {
         query: `mutation auth($access_token: String!){
          auth(access_token: $access_token){

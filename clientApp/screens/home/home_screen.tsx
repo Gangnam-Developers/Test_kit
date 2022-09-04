@@ -6,47 +6,43 @@ import { My, Quizz, QuizzCreate, Ranking } from "./partial";
 
 const Tab = createBottomTabNavigator();
 
-const HomeScreen = () => {
+const HomeScreen = ({ logout }: { logout: Function }) => {
   return (
     <Tab.Navigator
       initialRouteName="QUIZ"
-      // @ts-ignored
-      screenOptions={({ route }) => {
-        const options = {
-          tabBarActiveBackgroundColor: "rgb(39,44,59)",
-          tabBarActiveTintColor: "#52dba6",
-          tabBarIconStyle: { display: "none" },
-          tabBarLabelStyle: {
-            fontWeight: "900",
-            fontSize: 18,
+      screenOptions={{
+        tabBarActiveBackgroundColor: "rgb(39,44,59)",
+        tabBarActiveTintColor: "#52dba6",
+        tabBarIconStyle: { display: "none" },
+        tabBarLabelStyle: {
+          fontWeight: "900",
+          fontSize: 18,
+        },
+        tabBarItemStyle: {
+          borderRadius: 9,
+          height: 40,
+          justifyContent: "center",
+          alignItems: "center",
+          marginHorizontal: 26,
+          shadowColor: "black",
+          shadowOpacity: 0.26,
+          shadowRadius: 3,
+          shadowOffset: {
+            width: 3,
+            height: 3,
           },
-          tabBarItemStyle: {
-            borderRadius: 9,
-            height: 40,
-            justifyContent: "center",
-            alignItems: "center",
-            marginHorizontal: 26,
-            shadowColor: "black",
-            shadowOpacity: 0.26,
-            shadowRadius: 3,
-            shadowOffset: {
-              width: 3,
-              height: 3,
-            },
-          },
-          tabBarStyle: {
-            display: "flex",
-            flexDirection: "row",
-            height: "12%",
-            backgroundColor: "rgb(63,68,92)",
-            alignItems: "center",
-            borderTopWidth: 0,
-          },
-          headerStyle: {
-            backgroundColor: "transparent",
-          },
-        };
-        return options;
+        },
+        tabBarStyle: {
+          display: "flex",
+          flexDirection: "row",
+          height: "12%",
+          backgroundColor: "rgb(63,68,92)",
+          alignItems: "center",
+          borderTopWidth: 0,
+        },
+        headerStyle: {
+          backgroundColor: "transparent",
+        },
       }}
     >
       <Tab.Screen
@@ -108,7 +104,6 @@ const HomeScreen = () => {
       />
       <Tab.Screen
         name="MY"
-        component={My}
         options={{
           headerTitleAlign: "left",
           headerTitleStyle: {
@@ -118,7 +113,9 @@ const HomeScreen = () => {
           },
           headerShown: false,
         }}
-      />
+      >
+        {(props) => <My props={props} logout={logout} />}
+      </Tab.Screen>
       <Tab.Screen
         name="QuizzCreate"
         component={QuizzCreate}
