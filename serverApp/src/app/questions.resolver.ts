@@ -15,6 +15,10 @@ export class QuestionsResolver {
   async questions(@Args() shuffle: ShuffBool) {
     const questionDiff = await this.question.getQuestions();
 
+    if (!questionDiff) {
+      return new Error('No Data');
+    }
+
     if (!shuffle.shuffle) {
       return this.question.getQuestions();
     }

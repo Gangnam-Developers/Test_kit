@@ -31,4 +31,17 @@ class ShuffBool {
   readonly shuffle: boolean;
 }
 
-export { CreateUser, CreateQuestion, AuthInput, ShuffBool };
+@ArgsType()
+class UpdateQuizz {
+  @Field(() => [GraphQLJSON])
+  readonly quizzes: Array<{
+    quizId: string;
+    attempts: Array<{
+      correct: number;
+      incorrect: number;
+      attempt_count: number;
+    }>;
+  }>;
+}
+
+export { CreateUser, CreateQuestion, AuthInput, ShuffBool, UpdateQuizz };
