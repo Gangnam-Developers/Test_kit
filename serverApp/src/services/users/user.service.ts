@@ -10,6 +10,10 @@ export class UserService {
     private userModel: Model<IUsers>,
   ) {}
 
+  getCompetitors = async () => {
+    return await this.userModel.find().exec();
+  };
+
   getUser = async (email: string) => {
     return await this.userModel.findOne({ email });
   };

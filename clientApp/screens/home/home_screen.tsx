@@ -10,27 +10,28 @@ import { My, Quizz, QuizzCreate, Ranking } from "./partial";
 const Tab = createBottomTabNavigator();
 
 const HomeScreen = ({ logout }: { logout: Function }) => {
+  const [headerRanking, setHeaderRanking] = React.useState(true);
 
-  const [token, setToken] = React.useState<string>('');
+  const [token, setToken] = React.useState<string>("");
 
   const client = new ApolloClient({
     uri: `${BASE_URL}`,
-    cache: new InMemoryCache({canonizeResults: true}),
-    headers:{
-      authorization: `Bearer ${token}`
-    }
+    cache: new InMemoryCache({ canonizeResults: true }),
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
   });
 
   useMemo(async () => {
     try {
-      const token = await AsyncStorage.getItem("access_token")
+      const token = await AsyncStorage.getItem("access_token");
       if (token !== null) {
-        setToken(token)
+        setToken(token);
       }
     } catch (error) {
-      logout()
+      logout();
     }
-  }, [])
+  }, []);
 
   return (
     <ApolloProvider client={client}>
@@ -73,7 +74,6 @@ const HomeScreen = ({ logout }: { logout: Function }) => {
       >
         <Tab.Screen
           name="RANK"
-          component={Ranking}
           options={({ route }) => ({
             headerTitle: "RANKING",
             headerTitleAlign: "left",
@@ -90,8 +90,17 @@ const HomeScreen = ({ logout }: { logout: Function }) => {
               borderBottomWidth: 0,
               elevation: 0,
             },
+            headerShown: headerRanking,
           })}
-        />
+        >
+          {(props) => (
+            <Ranking
+              showHeader={() => setHeaderRanking(true)}
+              {...props}
+              hideHeader={() => setHeaderRanking(false)}
+            />
+          )}
+        </Tab.Screen>
         <Tab.Screen
           name="QUIZ"
           component={Quizz}

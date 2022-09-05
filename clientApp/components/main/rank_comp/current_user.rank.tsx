@@ -1,5 +1,12 @@
 import React from "react";
-import { Image, StyleSheet, View, Text, Touchable, TouchableOpacity } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  View,
+  Text,
+  Touchable,
+  TouchableOpacity,
+} from "react-native";
 import { EmptyAvartar } from "../../icons/app_icons";
 
 interface Props {
@@ -7,36 +14,40 @@ interface Props {
   username?: string;
   rate?: number;
   rank?: number;
-  navigate: Function
+  navigate: Function;
 }
 const Bullentin = (props: Props) => {
   const { avatar, username, rate, rank, navigate } = props;
   return (
     <TouchableOpacity style={styles.container} onPress={() => navigate()}>
       <View style={styles.avatar}>
-        <Image
-          style={{
-            borderRadius: 50,
-          }}
-          source={{
-            height: 100,
-            width: 100,
-            uri: avatar !== undefined ? avatar : EmptyAvartar(),
-          }}
-        />
+        <View>
+          <Image
+            style={{
+              borderRadius: 50,
+            }}
+            source={{
+              height: 70,
+              width: 70,
+              uri: avatar !== undefined ? avatar : EmptyAvartar(),
+            }}
+          />
+        </View>
         <View style={styles.user}>
           <Text
+            adjustsFontSizeToFit
             style={{
-              fontSize: 24,
+              fontSize: 18,
               color: "white",
               fontWeight: "600",
+              alignSelf: "flex-start",
             }}
           >
             {username}
           </Text>
           <Text
             style={{
-              fontSize: 40,
+              fontSize: 35,
               color: "white",
               fontWeight: "600",
               marginVertical: 2,
@@ -45,36 +56,36 @@ const Bullentin = (props: Props) => {
             {rate}%
           </Text>
         </View>
-      </View>
-      <View
-        style={{
-          ...styles.user,
-          display: "flex",
-          justifyContent: "center",
-          marginHorizontal: 60,
-        }}
-      >
-        <Text
+        <View
           style={{
-            fontSize: 24,
-            color: "#52dba6",
-            fontWeight: "600",
-            textAlign: "center",
+            ...styles.user,
+            display: "flex",
+            justifyContent: "center",
+            marginHorizontal: 60,
           }}
         >
-          RANK
-        </Text>
-        <Text
-          style={{
-            fontSize: 40,
-            color: "#52dba6",
-            fontWeight: "600",
-            marginVertical: 2,
-            textAlign: "center",
-          }}
-        >
-          {rank}
-        </Text>
+          <Text
+            style={{
+              fontSize: 18,
+              color: "#52dba6",
+              fontWeight: "600",
+              textAlign: "center",
+            }}
+          >
+            RANK
+          </Text>
+          <Text
+            style={{
+              fontSize: 35,
+              color: "#52dba6",
+              fontWeight: "600",
+              marginVertical: 2,
+              textAlign: "center",
+            }}
+          >
+            {rank}
+          </Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -83,14 +94,15 @@ const Bullentin = (props: Props) => {
 const styles = StyleSheet.create({
   container: {
     display: "flex",
+    flex: 1,
     flexDirection: "row",
-    height: 140,
+    height: 90,
     backgroundColor: "rgb(63, 68, 92)",
     paddingHorizontal: 20,
-    paddingVertical: 18,
   },
   avatar: {
     display: "flex",
+    marginHorizontal: 30,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",

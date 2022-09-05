@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import { SafeAreaView, Text, View, StyleSheet } from "react-native";
+import { gql, useQuery } from "@apollo/client";
+import React from "react";
+import { SafeAreaView, StyleSheet, StatusBar } from "react-native";
 import { Competitors } from "../../../../components/main/rank_comp/competitors.rank";
 import { Bullentin } from "../../../../components/main/rank_comp/current_user.rank";
 import {
@@ -7,8 +8,66 @@ import {
   ItemsProps,
 } from "../../../../components/main/rank_comp/rank.list";
 
-const Ranking = ({ route, navigation }: any) => {
+const Ranking = ({
+  route,
+  navigation,
+  hideHeader,
+  showHeader,
+}: {
+  route: any;
+  navigation: any;
+  hideHeader: Function;
+  showHeader: Function;
+}) => {
   const [competitor, setCompetitor] = React.useState<boolean>(false);
+
+  const [currentUser, setCurrentUser] = React.useState<{
+    avatar?: string;
+    name?: string;
+    gained?: number;
+    rank?: number;
+  }>();
+
+  const { refetch } = useQuery(
+    gql`
+      query {
+        getCurrentUser {
+          name
+          email
+          picture
+          quizzes
+        }
+        getCompetitors {
+          name
+          email
+          picture
+          quizzes
+        }
+      }
+    `,
+    {
+      onCompleted(data) {
+        if (data !== undefined) {
+          setCurrentUser({
+            avatar: data.getCurrentUser.picture,
+            name: data.getCurrentUser.name,
+            gained: sumGained(data.getCurrentUser.quizzes),
+          });
+        }
+      },
+    }
+  );
+
+  const sumGained = (input: Array<any>): number => {
+    if (input.length !== 0) {
+      const reducer = (accumulator: any, currentValue: any) =>
+      (accumulator + parseFloat(currentValue.gained))  
+      return Math.ceil(input.reduce(reducer, 0)/input.length);
+    }
+    return 0;
+  };
+
+  // console.log(currentUser?.gained)
 
   const mock: ItemsProps[] = [
     {
@@ -60,25 +119,34 @@ const Ranking = ({ route, navigation }: any) => {
 
   return (
     <SafeAreaView style={style.container}>
+      <StatusBar backgroundColor="transparent" barStyle="light-content" />
       {!competitor ? (
         <>
           <Bullentin
-            username="Aria"
-            rate={70}
+            username={`${currentUser?.name}`}
+            avatar={`${currentUser?.avatar}`}
+            rate={currentUser?.gained !== undefined ? currentUser.gained : 0}
             rank={32}
             navigate={() => navigation.navigate("MY")}
           />
           <CompeteList
             data={mock}
             navigation={navigation}
-            onDisPlay={() => setCompetitor(true)}
+            onDisPlay={() => {
+              setCompetitor(true);
+              hideHeader();
+            }}
           />
         </>
       ) : (
-        <Competitors data={route.params.name.label} goBack={() => {
-          setCompetitor(false);
-          navigation.setParams(undefined);
-        }}/>
+        <Competitors
+          data={route.params.name.label}
+          goBack={() => {
+            setCompetitor(false);
+            navigation.setParams(undefined);
+            showHeader();
+          }}
+        />
       )}
     </SafeAreaView>
   );

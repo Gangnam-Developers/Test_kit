@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Guard } from 'src/services/auth/guard/jwt.guard';
 import { QuestionsService } from 'src/services/questions/questions.service';
 import { UserService } from 'src/services/users/user.service';
@@ -16,9 +16,15 @@ export class UserResolvers {
   ) {}
 
   @UseGuards(Guard)
-  @Mutation(() => UserDTO)
+  @Query(() => UserDTO)
   async getCurrentUser(@CurrentUser() user: any) {
     return await this.userService.getUser(user.email);
+  }
+
+  @UseGuards(Guard)
+  @Query(() => [UserDTO])
+  async getCompetitors() {
+    return await this.userService.getCompetitors();
   }
 
   @UseGuards(Guard)

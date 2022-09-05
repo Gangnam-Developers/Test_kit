@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 @ObjectType()
 class UserDTO {
@@ -10,5 +11,7 @@ class UserDTO {
   readonly email: string;
   @Field(() => String)
   readonly picture: string;
+  @Field(() => [GraphQLJSON], { nullable: true })
+  readonly quizzes: Array<any>;
 }
 export { UserDTO };

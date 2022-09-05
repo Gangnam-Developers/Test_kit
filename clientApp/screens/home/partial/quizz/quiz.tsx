@@ -7,8 +7,6 @@ import { gql, useQuery } from "@apollo/client";
 const Quizz = () => {
   const [checkMode, setCheckMode] = React.useState<any>("question");
 
-  const [autoNext, setAutoNext] = React.useState<boolean>();
-
   const [display, setDipslay] = React.useState(false);
 
   const [shuf, setShuf] = React.useState<boolean>(false);
@@ -55,7 +53,6 @@ const Quizz = () => {
     } catch (error) {
       console.warn(error);
     } finally {
-      
       setCheckMode("question");
 
       if (checkMode === "correct") {
@@ -72,9 +69,9 @@ const Quizz = () => {
 
   return (
     <SafeAreaView style={style.container}>
+      <StatusBar backgroundColor="transparent" barStyle="light-content" />
       {display ? (
         <>
-          <StatusBar backgroundColor="transparent" barStyle="light-content" />
           <QuestionDisplay
             mode={checkMode}
             data={question?.question}
@@ -88,9 +85,6 @@ const Quizz = () => {
             action={{
               correct: () => setCheckMode("correct"),
               incorrect: () => setCheckMode("incorrect"),
-              autoNext: () => {
-                setAutoNext(true);
-              },
             }}
             mode={checkMode}
             id={question?.id}

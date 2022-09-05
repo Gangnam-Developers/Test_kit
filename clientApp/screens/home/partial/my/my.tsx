@@ -1,25 +1,71 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useState } from "react";
 import { Dimensions, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Header } from "../../../../components/main/profile_comp/header";
 import { AndroidStatusBar } from "../../../../components/system_comp/android.status";
 import { VictoryPie } from "victory-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { BASE_URL } from "react-native-dotenv";
+import { gql, useQuery } from "@apollo/client";
 
 const My = ({ props, logout }: { props: any; logout: Function }) => {
   const [myInfo, setMyInfo] = React.useState<{
-    avatar?: string,
+    avatar?: string;
     name: string;
     rank?: number;
     quizzes?: number;
   }>({
     name: "",
     rank: 0,
-    quizzes: 0,
   });
 
-  const [data, setData] = React.useState<any>();
+  const [analyze, setAnalyze] = useState<{
+    first_attempt: number;
+    second_attempt: number;
+    failed_attempt: number;
+  }>({
+    first_attempt: 0,
+    second_attempt: 0,
+    failed_attempt: 0,
+  });
+
+  const {} = useQuery(
+    gql`
+      query {
+        getCurrentUser {
+          name
+          email
+          picture
+          quizzes
+        }
+      }
+    `,
+    {
+      onCompleted(data) {
+        if (data !== undefined) {
+          setMyInfo({
+            avatar: data.getCurrentUser.picture,
+            name: data.getCurrentUser.name,
+            quizzes: data.getCurrentUser.quizzes.length,
+          });
+          setAnalyze({...statical(data.getCurrentUser.quizzes)})
+        }
+      },
+    }
+  );
+
+  const statical = (data: Array<any>) => {
+    const first_attempt = 100*(data.filter((el) => el.attempts.attempt_count === 1).length / 4);
+    const second_attempt = 100*(data.filter((el) => el.attempts.attempt_count === 2).length / 4);
+
+    const failed_attempt = 100 - (first_attempt + second_attempt);
+
+    return {
+      first_attempt: first_attempt,
+      second_attempt: second_attempt,
+      failed_attempt: failed_attempt
+    };
+  };
+
+  // console.log(analyze);
 
   const onLogout = React.useCallback(async () => {
     try {
@@ -28,51 +74,6 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
       console.warn(error);
     }
   }, []);
-
-  useMemo(async () => {
-    try {
-      const getToken = await AsyncStorage.getItem("access_token");
-
-      if (getToken === null) return;
-
-      const current_user = await axios.post(
-        BASE_URL,
-        {
-          query: `mutation{
-            getCurrentUser{
-              name
-              email
-              picture
-            }
-          }`,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken}`,
-          },
-        }
-      );
-
-      if (current_user.status === 200) {
-        setData(current_user.data.data.getCurrentUser);
-      }
-    } catch (error) {
-      if (error) {
-        // onLogout();
-        console.warn(error);
-      }
-    }
-  }, []);
-
-
-  useEffect(() => {
-    if (data !== undefined) {
-      setMyInfo({
-        avatar: data.picture,
-        name: data.name,
-      })
-    }
-  }, [data])
 
   return (
     <SafeAreaView style={style.statusBar}>
@@ -89,7 +90,7 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
           }}
           infoBoard={{
             rank: 32,
-            quizzes: 51,
+            quizzes: myInfo.quizzes,
           }}
           navigate={() => props.navigation.navigate("RANK")}
           logout={onLogout}
@@ -105,7 +106,7 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
             height={288}
             padding={30}
             colorScale={["#FC7CF5", "#FFEE68", "#40E3AF"]}
-            data={[{ y: 10 }, { y: 20 }, { y: 70 }]}
+            data={[{ y: analyze.failed_attempt }, { y: analyze.second_attempt }, { y: analyze.first_attempt }]}
             animate={{
               duration: 2000,
             }}
@@ -132,7 +133,7 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
               <Text
                 style={{ color: "#40E3AF", fontSize: 18, textAlign: "right" }}
               >
-                70%
+                {analyze.first_attempt}%
               </Text>
             </View>
             <View
@@ -146,7 +147,7 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
               <Text style={{ color: "#FFEE68", fontSize: 18, flex: 1 }}>
                 두번에 맞춘 확률
               </Text>
-              <Text style={{ color: "#FFEE68", fontSize: 18 }}>20%</Text>
+              <Text style={{ color: "#FFEE68", fontSize: 18 }}>{analyze.second_attempt}%</Text>
             </View>
             <View
               style={{
@@ -169,7 +170,7 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
               <Text
                 style={{ color: "#FC7CF5", fontSize: 18, marginVertical: 18 }}
               >
-                10%
+                {analyze.failed_attempt === 100 ? 0 : analyze.failed_attempt}%
               </Text>
             </View>
           </View>

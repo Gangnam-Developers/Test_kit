@@ -11,7 +11,7 @@ interface HeaderProps {
   currentUser: boolean;
   infoBoard?: {
     rank: number;
-    quizzes: number;
+    quizzes: number | undefined;
   };
   navigate: Function;
   logout: Function;

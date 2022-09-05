@@ -19,7 +19,6 @@ interface Props {
   action: {
     incorrect: Function;
     correct: Function;
-    autoNext: Function;
   };
   mode?: "correct" | "incorrect" | "question";
 }
@@ -151,9 +150,6 @@ const AnswerList = ({ answerOpts, action, mode, id }: Props): JSX.Element => {
     if (isCorrect) {
       getAction();
       setCorrectPicked(0), setInCorrectPicked(0);
-      // setIsCorrect(undefined);
-      // setDisable(false);
-      action.autoNext();
     }
   }, [isCorrect]);
 
