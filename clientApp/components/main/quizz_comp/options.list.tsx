@@ -1,6 +1,6 @@
 import AntDesign from "@expo/vector-icons/build/AntDesign";
 import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import {
 import "react-native-get-random-values";
 
 interface Props {
-  answerOpts?: any;
+  answerOpts: any;
   action: {
     incorrect: Function;
     correct: Function;
@@ -22,7 +22,7 @@ interface Props {
 }
 
 const AnswerList = ({ answerOpts, action, mode }: Props): JSX.Element => {
-  const [answers, setAnswers] = useState<Array<any>>();
+  const [answers, setAnswers] = useState<any>();
   const [isCorrect, setIsCorrect] = useState<boolean | undefined>();
   const [pickedOpt, setPickedOpt] = useState<any>();
   const [disabled, setDisable] = useState<boolean>(false);
@@ -32,8 +32,6 @@ const AnswerList = ({ answerOpts, action, mode }: Props): JSX.Element => {
       setPickedOpt(value);
       setIsCorrect(isCorrect);
     };
-
-    // console.log(isCorrect)
 
     const changeStyle = (option: string): StyleProp<ViewStyle> => {
       if (isCorrect !== undefined) {
@@ -107,9 +105,9 @@ const AnswerList = ({ answerOpts, action, mode }: Props): JSX.Element => {
     }
   }, [mode]);
 
-  useEffect(() => {
+  useMemo(() => {
     if (answerOpts !== undefined) {
-      setAnswers(answerOpts.questions[0].options);
+      setAnswers(answerOpts);
     }
   }, [answerOpts]);
 

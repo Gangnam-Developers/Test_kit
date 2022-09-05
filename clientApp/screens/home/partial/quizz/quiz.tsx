@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from "react";
-import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { SafeAreaView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { AnswerList } from "../../../../components/main/quizz_comp/options.list";
 import { QuestionDisplay } from "../../../../components/main/quizz_comp/question.card";
 import { gql, useQuery } from "@apollo/client";
@@ -7,11 +7,15 @@ import { gql, useQuery } from "@apollo/client";
 const Quizz = () => {
   const [checkMode, setCheckMode] = React.useState<any>("question");
 
+  const [display, setDipslay] = React.useState(false);
+
   const [shuf, setShuf] = React.useState<boolean>(false);
 
-  const [test, setTest] = React.useState<any>();
+  const [opts, setOpts] = React.useState<any>();
 
-  const { data, refetch, loading } = useQuery(
+  const [question, setQuestion] = React.useState<any>();
+
+  const { refetch } = useQuery(
     gql`
       query Question($shuffle: Boolean!) {
         questions(shuffle: $shuffle) {
@@ -25,10 +29,15 @@ const Quizz = () => {
       variables: {
         shuffle: shuf,
       },
+      onCompleted(data) {
+        if (data.questions.length > 0) {
+          setOpts(data.questions[0].options);
+          setQuestion(data.questions[0].question);
+          setDipslay(true);
+        }
+      },
     }
   );
-
-  console.log(loading)
 
   const clearUp = async () => {
     try {
@@ -46,31 +55,42 @@ const Quizz = () => {
     }
   }, [checkMode]);
 
-  useMemo(async () => {
-    if (data !== undefined) {
-      setTest(data);
-    }
-  }, [data]);
-
   return (
     <SafeAreaView style={style.container}>
-      <StatusBar backgroundColor="transparent" barStyle="light-content" />
-      <QuestionDisplay
-        mode={checkMode}
-        data={test}
-        shuffle={() => {
-          setShuf(true);
-          refetch();
-        }}
-      />
-      <AnswerList
-        answerOpts={test}
-        action={{
-          correct: () => setCheckMode("correct"),
-          incorrect: () => setCheckMode("incorrect"),
-        }}
-        mode={checkMode}
-      />
+      {display ? (
+        <>
+          <StatusBar backgroundColor="transparent" barStyle="light-content" />
+          <QuestionDisplay
+            mode={checkMode}
+            data={question}
+            shuffle={() => {
+              setShuf(true);
+              refetch();
+            }}
+          />
+          <AnswerList
+            answerOpts={opts}
+            action={{
+              correct: () => setCheckMode("correct"),
+              incorrect: () => setCheckMode("incorrect"),
+            }}
+            mode={checkMode}
+          />
+        </>
+      ) : (
+        <View style={style.innerView}>
+          <Text
+            style={{
+              fontSize: 30,
+              fontWeight: "bold",
+              fontVariant: ["oldstyle-nums"],
+              color: "rgb(63, 68, 92)",
+            }}
+          >
+            No Questions
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -78,6 +98,13 @@ const Quizz = () => {
 const style = StyleSheet.create({
   container: {
     backgroundColor: "rgb(38, 42, 57)",
+    height: "100%",
+  },
+  innerView: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
     height: "100%",
   },
 });

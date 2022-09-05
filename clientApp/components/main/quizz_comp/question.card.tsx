@@ -3,7 +3,6 @@ import React, { useEffect, useMemo } from "react";
 import {
   View,
   ScrollView,
-  Pressable,
   StyleSheet,
   Text,
   Animated,
@@ -89,11 +88,9 @@ const QuestionDisplay = ({ mode, data, shuffle }: Props): JSX.Element => {
 
   useMemo(() => {
     if (data !== undefined) {
-      setQuestions(data.questions[0].question)
+      setQuestions(data)
     }
   }, [data])
-
-  // console.log(question)
 
   if (mode === "incorrect") {
     return (
