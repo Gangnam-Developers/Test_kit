@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import AntDesign from "@expo/vector-icons/build/AntDesign";
 import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 import React, { useEffect, useMemo, useState } from "react";
@@ -13,50 +14,85 @@ import {
 import "react-native-get-random-values";
 
 interface Props {
+  id?: string;
   answerOpts: any;
   action: {
     incorrect: Function;
     correct: Function;
+    autoNext: Function;
   };
   mode?: "correct" | "incorrect" | "question";
 }
 
-const AnswerList = ({ answerOpts, action, mode }: Props): JSX.Element => {
+const AnswerList = ({ answerOpts, action, mode, id }: Props): JSX.Element => {
   const [answers, setAnswers] = useState<any>();
   const [isCorrect, setIsCorrect] = useState<boolean | undefined>();
   const [pickedOpt, setPickedOpt] = useState<any>();
   const [disabled, setDisable] = useState<boolean>(false);
+  const [correctPicked, setCorrectPicked] = useState<number>(0);
+  const [incorrectPicked, setInCorrectPicked] = useState<number>(0);
 
-  const ListRender = ({ item }: any) => {
-    const selected = (value: number, isCorrect: any) => {
-      setPickedOpt(value);
-      setIsCorrect(isCorrect);
-    };
-
-    const changeStyle = (option: string): StyleProp<ViewStyle> => {
-      if (isCorrect !== undefined) {
-        if (pickedOpt === option && isCorrect) {
-          action.correct();
-          return {
-            ...style.main,
-            backgroundColor: "green",
-          };
-        } else if (option === pickedOpt && !isCorrect) {
-          setDisable(true);
-          action.incorrect();
-          return {
-            ...style.main,
-            backgroundColor: "red",
-          };
+  const [getAction] = useMutation(
+    gql`
+      mutation AssignedQuiz($input: UpdateQuizz!) {
+        assignedQuiz(input: $input) {
+          message
         }
       }
-      return style.main;
-    };
+    `,
+    {
+      variables: {
+        input: {
+          quizId: id,
+          attempts: {
+            correct: correctPicked,
+            incorrect: incorrectPicked,
+            attempt_count: correctPicked + incorrectPicked,
+          },
+        },
+      },
+    }
+  );
 
+  const selected = (value: number, iscorrect: any) => {
+    setPickedOpt(value);
+    setIsCorrect(iscorrect);
+
+    if (iscorrect) {
+      setCorrectPicked((prevNumb: number) => (prevNumb += 1));
+    } else {
+      setInCorrectPicked((prevNumb: number) => (prevNumb += 1));
+    }
+  };
+
+  const changeStyle = (option: string): StyleProp<ViewStyle> => {
+    if (isCorrect !== undefined) {
+      if (pickedOpt === option && isCorrect) {
+        setDisable(true);
+        action.correct();
+        return {
+          ...style.main,
+          backgroundColor: "green",
+        };
+      } else if (option === pickedOpt && !isCorrect) {
+        setDisable(true);
+        action.incorrect();
+        return {
+          ...style.main,
+          backgroundColor: "red",
+        };
+      }
+    }
+    return style.main;
+  };
+
+  const ListRender = ({ item }: any) => {
     return (
       <TouchableOpacity
         disabled={disabled}
-        onPress={() => {selected(item.option, item.isCorrect); console.log(item.isCorrect)}}
+        onPress={() => {
+          selected(item.option, item.isCorrect);
+        }}
       >
         <View style={changeStyle(item.option)}>
           <View style={style.optionInner}>
@@ -110,6 +146,16 @@ const AnswerList = ({ answerOpts, action, mode }: Props): JSX.Element => {
       setAnswers(answerOpts);
     }
   }, [answerOpts]);
+
+  useEffect(() => {
+    if (isCorrect) {
+      getAction();
+      setCorrectPicked(0), setInCorrectPicked(0);
+      // setIsCorrect(undefined);
+      // setDisable(false);
+      action.autoNext();
+    }
+  }, [isCorrect]);
 
   return (
     <FlatList

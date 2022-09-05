@@ -97,7 +97,7 @@ const GoogleLogin = ({ action }: { action: Function }) => {
       if (authentication !== undefined) {
         const reponse = await Authorize(authentication);
 
-        console.log(reponse.data.data.auth.access_token)
+        // console.log(reponse.data.data.auth.access_token)
 
         try {
           await AsyncStorage.setItem(

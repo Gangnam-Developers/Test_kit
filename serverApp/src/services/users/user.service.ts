@@ -14,6 +14,20 @@ export class UserService {
     return await this.userModel.findOne({ email });
   };
 
+  updateQuizz = async (email: string, quizzes: object) => {
+    return await this.userModel.findOneAndUpdate(
+      { email: email },
+      {
+        $push: {
+          quizzes: quizzes,
+        },
+      },
+      {
+        upsert: true,
+      },
+    );
+  };
+
   create = async (createUser: CreateUser): Promise<IUsers> => {
     const initUser = new this.userModel(createUser);
     return await initUser.save();

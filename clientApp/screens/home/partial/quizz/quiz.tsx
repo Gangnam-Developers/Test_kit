@@ -7,13 +7,17 @@ import { gql, useQuery } from "@apollo/client";
 const Quizz = () => {
   const [checkMode, setCheckMode] = React.useState<any>("question");
 
+  const [autoNext, setAutoNext] = React.useState<boolean>();
+
   const [display, setDipslay] = React.useState(false);
 
   const [shuf, setShuf] = React.useState<boolean>(false);
 
-  const [opts, setOpts] = React.useState<any>();
-
-  const [question, setQuestion] = React.useState<any>();
+  const [question, setQuestion] = React.useState<{
+    id: string;
+    question: any;
+    options: any;
+  }>();
 
   const { refetch } = useQuery(
     gql`
@@ -29,29 +33,40 @@ const Quizz = () => {
       variables: {
         shuffle: shuf,
       },
+      fetchPolicy: "network-only",
       onCompleted(data) {
         if (data.questions.length > 0) {
-          setOpts(data.questions[0].options);
-          setQuestion(data.questions[0].question);
+          setQuestion({
+            id: data.questions[0].id,
+            question: data.questions[0].question,
+            options: data.questions[0].options,
+          });
           setDipslay(true);
+        } else {
+          setDipslay(false);
         }
       },
     }
   );
 
-  const clearUp = async () => {
+  const clearUp = async (settime: number) => {
     try {
-      await new Promise((resolve) => setInterval(resolve, 1000));
+      await new Promise((resolve) => setInterval(resolve, settime));
     } catch (error) {
       console.warn(error);
     } finally {
+      
       setCheckMode("question");
+
+      if (checkMode === "correct") {
+        refetch();
+      }
     }
   };
 
   useEffect(() => {
-    if (checkMode === "incorrect") {
-      clearUp();
+    if (checkMode === "incorrect" || "correct") {
+      clearUp(1000);
     }
   }, [checkMode]);
 
@@ -62,19 +77,23 @@ const Quizz = () => {
           <StatusBar backgroundColor="transparent" barStyle="light-content" />
           <QuestionDisplay
             mode={checkMode}
-            data={question}
+            data={question?.question}
             shuffle={() => {
               setShuf(true);
               refetch();
             }}
           />
           <AnswerList
-            answerOpts={opts}
+            answerOpts={question?.options}
             action={{
               correct: () => setCheckMode("correct"),
               incorrect: () => setCheckMode("incorrect"),
+              autoNext: () => {
+                setAutoNext(true);
+              },
             }}
             mode={checkMode}
+            id={question?.id}
           />
         </>
       ) : (

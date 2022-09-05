@@ -14,6 +14,10 @@ export class QuestionsService {
     return await this.questionModel.find().exec();
   };
 
+  getQuestionsById = async (questionId: string): Promise<string> => {
+    return '';
+  };
+
   makeQuestion = async (makeQuestion: CreateQuestion): Promise<IQuestions> => {
     const makeNewQuestion = new this.questionModel(makeQuestion);
     return await makeNewQuestion.save();

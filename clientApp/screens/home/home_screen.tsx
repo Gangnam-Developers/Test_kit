@@ -2,7 +2,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import AntDesign from "@expo/vector-icons/build/AntDesign";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { BASE_URL } from "react-native-dotenv";
 import { My, Quizz, QuizzCreate, Ranking } from "./partial";
@@ -15,7 +15,7 @@ const HomeScreen = ({ logout }: { logout: Function }) => {
 
   const client = new ApolloClient({
     uri: `${BASE_URL}`,
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({canonizeResults: true}),
     headers:{
       authorization: `Bearer ${token}`
     }

@@ -10,5 +10,7 @@ class Token {
 class Message {
   @Field(() => String)
   message: string;
+  @Field(() => String, { nullable: true })
+  error?: string;
 }
 export { Message, Token };
