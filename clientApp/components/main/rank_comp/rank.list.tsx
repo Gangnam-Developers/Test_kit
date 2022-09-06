@@ -49,6 +49,7 @@ const Items = ({
     onPress={() => {
       navigation.navigate("RANK", {
         name: name,
+        rank: rank
       });
       onDisplay();
     }}
@@ -73,7 +74,7 @@ const Items = ({
         source={{
           height: 40,
           width: 40,
-          uri: avatar === undefined ? avatar : EmptyAvartar(),
+          uri: avatar !== undefined ? avatar : EmptyAvartar(),
         }}
       />
       <Text
@@ -102,25 +103,23 @@ const Items = ({
 
 const CompeteList = ({ data, navigation, onDisPlay }: Props) => {
   const renderItems = ({ item }: any) => (
-    <View style={{ height: "27%" }}>
-      <Items
-        rank={{
-          digit: item.rank.digit,
-          color: item.rank.color,
-        }}
-        avatar={item.avatar}
-        name={{
-          label: item.name.label,
-          color: item.name.color,
-        }}
-        rate={{
-          digit: item.rate.digit,
-          color: item.rate.color,
-        }}
-        navigation={navigation}
-        onDisplay={onDisPlay}
-      />
-    </View>
+    <Items
+      rank={{
+        digit: item.rank.digit,
+        color: item.rank.color,
+      }}
+      avatar={item.avatar}
+      name={{
+        label: item.name.label,
+        color: item.name.color,
+      }}
+      rate={{
+        digit: item.rate.digit,
+        color: item.rate.color,
+      }}
+      navigation={navigation}
+      onDisplay={onDisPlay}
+    />
   );
 
   return (
@@ -128,6 +127,17 @@ const CompeteList = ({ data, navigation, onDisPlay }: Props) => {
       data={data}
       initialNumToRender={9}
       renderItem={renderItems}
+      contentContainerStyle={{
+        margin: 18,
+      }}
+      ItemSeparatorComponent={() => (
+        <View
+          style={{
+            height: 18,
+            width: "100%",
+          }}
+        />
+      )}
       keyExtractor={(items: ItemsProps) => `${items.rank.digit}`}
     />
   );
@@ -135,7 +145,6 @@ const CompeteList = ({ data, navigation, onDisPlay }: Props) => {
 
 const styles = StyleSheet.create({
   itemsContainer: {
-    margin: 18,
     display: "flex",
     flexDirection: "row",
     flex: 1,

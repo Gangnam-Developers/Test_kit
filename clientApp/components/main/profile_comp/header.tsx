@@ -9,6 +9,7 @@ interface HeaderProps {
     label: string;
   };
   currentUser: boolean;
+  competitorBoard: boolean;
   infoBoard?: {
     rank: number;
     quizzes: number | undefined;
@@ -87,6 +88,27 @@ const Header = ({ ...props }: HeaderProps) => {
         </>
       </View>
       <View style={styles.infoBoard}>
+        {props.competitorBoard && (
+          <View style={{
+            flex: 0.6,
+            transform: [{
+              translateX: 24
+            }, {
+              translateY: -2
+            }]
+          }}>
+            <Image
+              style={{
+                borderRadius: 35,
+              }}
+              source={{
+                height: 70,
+                width: 70,
+                uri: props.avatar !== undefined ? props.avatar : EmptyAvartar(),
+              }}
+            />
+          </View>
+        )}
         <View
           style={{
             flex: 0.5,

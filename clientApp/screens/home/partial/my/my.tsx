@@ -1,22 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Header } from "../../../../components/main/profile_comp/header";
 import { AndroidStatusBar } from "../../../../components/system_comp/android.status";
 import { VictoryPie } from "victory-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { gql, useQuery } from "@apollo/client";
+import { Util } from "../../../../util/util";
 
-const My = ({ props, logout }: { props: any; logout: Function }) => {
-  const [myInfo, setMyInfo] = React.useState<{
-    avatar?: string;
-    name: string;
-    rank?: number;
-    quizzes?: number;
-  }>({
-    name: "",
-    rank: 0,
-  });
-
+const My = ({
+  props,
+  logout,
+  data,
+}: {
+  props: any;
+  logout: Function;
+  data: any;
+}) => {
   const [analyze, setAnalyze] = useState<{
     first_attempt: number;
     second_attempt: number;
@@ -27,56 +25,11 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
     failed_attempt: 100,
   });
 
-  const {} = useQuery(
-    gql`
-      query {
-        getCurrentUser {
-          name
-          email
-          picture
-          quizzes
-        }
-      }
-    `,
-    {
-      onCompleted(data) {
-        if (data !== undefined) {
-          setMyInfo({
-            avatar: data.getCurrentUser.picture,
-            name: data.getCurrentUser.name,
-            quizzes: data.getCurrentUser.quizzes.length,
-          });
-
-          if (data.getCurrentUser.quizzes.length !== 0) {
-            setAnalyze({ ...statical(data.getCurrentUser.quizzes) });
-          }
-        }
-      },
+  useEffect(() => {
+    if (data.quizzes.length !== 0) {
+      setAnalyze({ ...Util.statical(data.quizzes) });
     }
-  );
-
-  console.log(analyze);
-
-  const statical = (data: Array<any>) => {
-    const first_attempt =
-      100 *
-      (data.filter((el) => el.attempts.attempt_count === 1).length /
-        data.length);
-    const second_attempt =
-      100 *
-      (data.filter((el) => el.attempts.attempt_count === 2).length /
-        data.length);
-
-    const failed_attempt = 100 - (first_attempt + second_attempt);
-
-    return {
-      first_attempt: first_attempt,
-      second_attempt: second_attempt,
-      failed_attempt: failed_attempt,
-    };
-  };
-
-  // console.log(analyze);
+  }, [data]);
 
   const onLogout = React.useCallback(async () => {
     try {
@@ -95,16 +48,17 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
         />
         <Header
           currentUser={true}
-          avatar={myInfo.avatar}
+          avatar={data.avatar}
           title={{
-            label: myInfo.name,
+            label: data.name,
           }}
           infoBoard={{
-            rank: 32,
-            quizzes: myInfo.quizzes,
+            rank: data.rank.currentUser,
+            quizzes: data.quizzes.length,
           }}
           navigate={() => props.navigation.navigate("RANK")}
           logout={onLogout}
+          competitorBoard={false}
         />
         <View
           style={{
@@ -150,7 +104,11 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
                 한번에 맞춘 확률
               </Text>
               <Text
-                style={{ color: "#40E3AF", fontSize: 18, textAlign: "right" }}
+                style={{
+                  color: "#40E3AF",
+                  fontSize: 18,
+                  textAlign: "right",
+                }}
               >
                 {analyze.first_attempt}%
               </Text>
@@ -189,7 +147,11 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
                 오답률
               </Text>
               <Text
-                style={{ color: "#FC7CF5", fontSize: 18, marginVertical: 18 }}
+                style={{
+                  color: "#FC7CF5",
+                  fontSize: 18,
+                  marginVertical: 18,
+                }}
               >
                 {analyze.failed_attempt === 100 ? 0 : analyze.failed_attempt}%
               </Text>

@@ -1,15 +1,54 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Dimensions, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { VictoryPie } from "victory-native";
+import { Util } from "../../../util/util";
 import { AndroidStatusBar } from "../../system_comp/android.status";
 import { Header } from "../profile_comp/header";
 
 interface Props {
-  data: string;
+  name: string;
+  data: any;
   goBack: Function;
+  isDetailBoard: boolean
 }
 
-const Competitors = ({ data, goBack }: Props) => {
+const Competitors = ({ name, data, goBack, isDetailBoard }: Props) => {
+  const [competitorInfo, setCompetitorInfo] = React.useState<any>();
+
+  const [rank, setRank] = React.useState<number>(0);
+
+  const [quizzes, setQuizzes] = React.useState<number>(0);
+
+  const [avatar, setAvatar] = React.useState<string>();
+
+  const [analyze, setAnalyze] = React.useState<{
+    first_attempt: number;
+    second_attempt: number;
+    failed_attempt: number;
+  }>({
+    first_attempt: 0,
+    second_attempt: 0,
+    failed_attempt: 100,
+  });
+
+  useEffect(() => {
+    if (name !== undefined && Array.isArray(data)) {
+      setCompetitorInfo(
+        data.filter((el: { name: string }) => el.name === name)[0]
+      );
+
+      setRank(data.findIndex((el: { name: string }) => el.name === name) + 1);
+    }
+  }, [name, data]);
+
+  useEffect(() => {
+    if (competitorInfo !== undefined) {
+      setQuizzes(competitorInfo.quizzes.length);
+      setAnalyze({ ...Util.statical(competitorInfo.quizzes) });
+      setAvatar(competitorInfo.picture)
+    }
+  }, [competitorInfo]);
+
   return (
     <SafeAreaView style={style.statusBar}>
       <SafeAreaView style={style.container}>
@@ -18,16 +57,18 @@ const Competitors = ({ data, goBack }: Props) => {
           barStyle="light-content"
         />
         <Header
+          avatar={avatar}
           currentUser={false}
           title={{
-            label: data,
+            label: name,
           }}
           infoBoard={{
-            rank: 32,
-            quizzes: 51,
+            rank: rank,
+            quizzes: quizzes,
           }}
           navigate={goBack}
           logout={() => {}}
+          competitorBoard={isDetailBoard}
         />
         <View
           style={{
@@ -40,7 +81,11 @@ const Competitors = ({ data, goBack }: Props) => {
             height={288}
             padding={30}
             colorScale={["#FC7CF5", "#FFEE68", "#40E3AF"]}
-            data={[{ y: 10 }, { y: 20 }, { y: 70 }]}
+            data={[
+              { y: analyze.failed_attempt },
+              { y: analyze.second_attempt },
+              { y: analyze.first_attempt },
+            ]}
             animate={{
               duration: 2000,
             }}
@@ -67,7 +112,7 @@ const Competitors = ({ data, goBack }: Props) => {
               <Text
                 style={{ color: "#40E3AF", fontSize: 18, textAlign: "right" }}
               >
-                70%
+                ${analyze.first_attempt}%
               </Text>
             </View>
             <View
@@ -81,7 +126,9 @@ const Competitors = ({ data, goBack }: Props) => {
               <Text style={{ color: "#FFEE68", fontSize: 18, flex: 1 }}>
                 두번에 맞춘 확률
               </Text>
-              <Text style={{ color: "#FFEE68", fontSize: 18 }}>20%</Text>
+              <Text style={{ color: "#FFEE68", fontSize: 18 }}>
+                ${analyze.second_attempt}%
+              </Text>
             </View>
             <View
               style={{
@@ -104,7 +151,7 @@ const Competitors = ({ data, goBack }: Props) => {
               <Text
                 style={{ color: "#FC7CF5", fontSize: 18, marginVertical: 18 }}
               >
-                10%
+                ${analyze.failed_attempt === 100 ? 0 : analyze.failed_attempt}%
               </Text>
             </View>
           </View>

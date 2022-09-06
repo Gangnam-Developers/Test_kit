@@ -27,8 +27,8 @@ const Bullentin = (props: Props) => {
               borderRadius: 50,
             }}
             source={{
-              height: 70,
-              width: 70,
+              height: 80,
+              width: 80,
               uri: avatar !== undefined ? avatar : EmptyAvartar(),
             }}
           />
