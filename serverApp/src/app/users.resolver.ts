@@ -4,7 +4,7 @@ import { Guard } from 'src/services/auth/guard/jwt.guard';
 import { QuestionsService } from 'src/services/questions/questions.service';
 import { UserService } from 'src/services/users/user.service';
 import { UserDTO } from 'src/struct/dto/user.dto';
-import { UpdateQuizz } from 'src/struct/input/input';
+import { ScoreSummary, UpdateQuizz } from 'src/struct/input/input';
 import { Message } from 'src/struct/reponses/types';
 import { CurrentUser } from 'src/util/util.decorators';
 
@@ -42,6 +42,7 @@ export class UserResolvers {
 
       if (_user) {
         const gained = 100 - Math.ceil(quizzes.attempts.incorrect * (100 / 3));
+
         const sign_attempt = await this.userService.updateQuizz(user.email, {
           ...quizzes,
           gained: gained,
@@ -60,6 +61,27 @@ export class UserResolvers {
       return {
         error: error,
       };
+    }
+  }
+
+  @UseGuards(Guard)
+  @Mutation(() => Message)
+  async scoreSummary(
+    @Args('rate') rate: ScoreSummary,
+    @CurrentUser() user: any,
+  ) {
+    try {
+      const upsert = await this.userService.scoreSummary(user.email, {
+        rate: rate.rate,
+      });
+
+      if (upsert) {
+        return {
+          message: 'Updated Succesfully',
+        };
+      }
+    } catch (error) {
+      return new Error(error);
     }
   }
 }

@@ -36,6 +36,7 @@ export class AuthService {
             name: userInfoResponse.data.name,
             email: userInfoResponse.data.email,
             picture: userInfoResponse.data.picture,
+            rate: 0,
           });
 
           const payload = {

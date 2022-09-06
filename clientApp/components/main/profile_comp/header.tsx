@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     marginTop: 9,
-    height: 170,
+    // height: 170,
     paddingVertical: 22,
   },
 });

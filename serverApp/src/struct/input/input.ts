@@ -1,4 +1,4 @@
-import { ArgsType, Field, InputType } from '@nestjs/graphql';
+import { ArgsType, Field, InputType, PickType } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 
 @InputType()
@@ -9,6 +9,8 @@ class CreateUser {
   readonly email: string;
   @Field(() => String)
   readonly picture: string;
+  @Field(() => Number, { nullable: true })
+  readonly rate: number;
 }
 
 @InputType()
@@ -43,4 +45,14 @@ class UpdateQuizz {
   };
 }
 
-export { CreateUser, CreateQuestion, AuthInput, ShuffBool, UpdateQuizz };
+@InputType()
+class ScoreSummary extends PickType(CreateUser, ['rate']) {}
+
+export {
+  CreateUser,
+  CreateQuestion,
+  AuthInput,
+  ShuffBool,
+  UpdateQuizz,
+  ScoreSummary,
+};

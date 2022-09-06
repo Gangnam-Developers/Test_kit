@@ -1,6 +1,9 @@
-import { gql, useQuery } from "@apollo/client";
-import React from "react";
+import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import React, { useEffect, useMemo } from "react";
 import { SafeAreaView, StyleSheet, StatusBar } from "react-native";
+import { BASE_URL } from "react-native-dotenv";
 import { Competitors } from "../../../../components/main/rank_comp/competitors.rank";
 import { Bullentin } from "../../../../components/main/rank_comp/current_user.rank";
 import {
@@ -24,11 +27,12 @@ const Ranking = ({
   const [currentUser, setCurrentUser] = React.useState<{
     avatar?: string;
     name?: string;
-    gained?: number;
-    rank?: number;
-  }>();
+    gained: number;
+  }>({
+    gained: 0,
+  });
 
-  const { refetch } = useQuery(
+  const {} = useQuery(
     gql`
       query {
         getCurrentUser {
@@ -53,6 +57,24 @@ const Ranking = ({
             name: data.getCurrentUser.name,
             gained: sumGained(data.getCurrentUser.quizzes),
           });
+          getAction()
+        }
+      },
+    }
+  );
+
+  const [getAction, {}] = useMutation(
+    gql`
+      mutation ScoreSummary($rate: ScoreSummary!) {
+        scoreSummary(rate: $rate) {
+          message
+        }
+      }
+    `,
+    {
+      variables: {
+        rate: {
+          rate: currentUser.gained
         }
       },
     }
@@ -61,13 +83,11 @@ const Ranking = ({
   const sumGained = (input: Array<any>): number => {
     if (input.length !== 0) {
       const reducer = (accumulator: any, currentValue: any) =>
-      (accumulator + parseFloat(currentValue.gained))  
-      return Math.ceil(input.reduce(reducer, 0)/input.length);
+        accumulator + parseFloat(currentValue.gained);
+      return Math.ceil(input.reduce(reducer, 0) / input.length);
     }
     return 0;
   };
-
-  // console.log(currentUser?.gained)
 
   const mock: ItemsProps[] = [
     {

@@ -11,7 +11,7 @@ export class UserService {
   ) {}
 
   getCompetitors = async () => {
-    return await this.userModel.find().exec();
+    return await this.userModel.find().sort({ rate: -1 }).exec();
   };
 
   getUser = async (email: string) => {
@@ -26,8 +26,14 @@ export class UserService {
           quizzes: quizzes,
         },
       },
+    );
+  };
+
+  scoreSummary = async (email: string, element: object) => {
+    return await this.userModel.findOneAndUpdate(
+      { email: email },
       {
-        upsert: true,
+        ...element,
       },
     );
   };

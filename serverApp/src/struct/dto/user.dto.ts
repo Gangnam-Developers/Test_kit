@@ -13,5 +13,7 @@ class UserDTO {
   readonly picture: string;
   @Field(() => [GraphQLJSON], { nullable: true })
   readonly quizzes: Array<any>;
+  @Field(() => Number, { nullable: true })
+  readonly rate: number;
 }
 export { UserDTO };

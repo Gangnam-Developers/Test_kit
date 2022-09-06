@@ -94,9 +94,8 @@ const Bullentin = (props: Props) => {
 const styles = StyleSheet.create({
   container: {
     display: "flex",
-    flex: 1,
     flexDirection: "row",
-    height: 90,
+    height: 120,
     backgroundColor: "rgb(63, 68, 92)",
     paddingHorizontal: 20,
   },

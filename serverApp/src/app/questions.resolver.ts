@@ -22,7 +22,7 @@ export class QuestionsResolver {
 
     const _user = await this.userService.getUser(user.email);
 
-    if (_user.quizzes.length !== 0) {
+    if (_user.quizzes.length !== 0 && _user.quizzes !== null) {
       return questionDiff.filter(
         (x) => !_user.quizzes.some((y) => y.quizId === x.id),
       );

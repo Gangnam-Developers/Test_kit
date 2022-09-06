@@ -10,6 +10,7 @@ interface IUsers extends Document {
   readonly email: string;
   readonly picture: string;
   readonly quizzes: Array<any>;
+  readonly rate: number;
 }
 
 export { IQuestions, IUsers };

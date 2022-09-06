@@ -24,7 +24,7 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
   }>({
     first_attempt: 0,
     second_attempt: 0,
-    failed_attempt: 0,
+    failed_attempt: 100,
   });
 
   const {} = useQuery(
@@ -46,22 +46,33 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
             name: data.getCurrentUser.name,
             quizzes: data.getCurrentUser.quizzes.length,
           });
-          setAnalyze({...statical(data.getCurrentUser.quizzes)})
+
+          if (data.getCurrentUser.quizzes.length !== 0) {
+            setAnalyze({ ...statical(data.getCurrentUser.quizzes) });
+          }
         }
       },
     }
   );
 
+  console.log(analyze);
+
   const statical = (data: Array<any>) => {
-    const first_attempt = 100*(data.filter((el) => el.attempts.attempt_count === 1).length / 4);
-    const second_attempt = 100*(data.filter((el) => el.attempts.attempt_count === 2).length / 4);
+    const first_attempt =
+      100 *
+      (data.filter((el) => el.attempts.attempt_count === 1).length /
+        data.length);
+    const second_attempt =
+      100 *
+      (data.filter((el) => el.attempts.attempt_count === 2).length /
+        data.length);
 
     const failed_attempt = 100 - (first_attempt + second_attempt);
 
     return {
       first_attempt: first_attempt,
       second_attempt: second_attempt,
-      failed_attempt: failed_attempt
+      failed_attempt: failed_attempt,
     };
   };
 
@@ -106,7 +117,15 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
             height={288}
             padding={30}
             colorScale={["#FC7CF5", "#FFEE68", "#40E3AF"]}
-            data={[{ y: analyze.failed_attempt }, { y: analyze.second_attempt }, { y: analyze.first_attempt }]}
+            data={[
+              {
+                y: analyze.failed_attempt,
+              },
+              {
+                y: analyze.second_attempt,
+              },
+              { y: analyze.first_attempt },
+            ]}
             animate={{
               duration: 2000,
             }}
@@ -147,7 +166,9 @@ const My = ({ props, logout }: { props: any; logout: Function }) => {
               <Text style={{ color: "#FFEE68", fontSize: 18, flex: 1 }}>
                 두번에 맞춘 확률
               </Text>
-              <Text style={{ color: "#FFEE68", fontSize: 18 }}>{analyze.second_attempt}%</Text>
+              <Text style={{ color: "#FFEE68", fontSize: 18 }}>
+                {analyze.second_attempt}%
+              </Text>
             </View>
             <View
               style={{

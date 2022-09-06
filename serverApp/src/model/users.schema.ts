@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema(
     email: String,
     picture: String,
     quizzes: Array<any>,
+    rate: Number,
   },
   {
     timestamps: true,
